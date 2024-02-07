@@ -1,2 +1,4 @@
 tmp/
 out/
+.venv/
+__pycache__/
