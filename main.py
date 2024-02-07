@@ -1,11 +1,8 @@
 import os
-import logging
-
-logging.basicConfig(level=logging.INFO)
-
 from PIL import Image
+from tqdm import tqdm
 
-from util import cwd, framenaming, ensure_folder, clear_folder, generate_name
+from util import cwd, framenaming, ensure_folder, clear_folder, generate_name, print_check, print_begin
 from args import imgpath, captiontext
 from media import fetch_frames
 from generatecaption import (
@@ -22,15 +19,15 @@ base_dir = os.path.abspath(os.path.dirname(__file__)) + "/"
 tmp_dir = "tmp/"
 out_dir = "out/"
 
-logging.info(f"Initializing directories...")
+print_begin("Initializing directories")
 ensure_folder(tmp_dir)
 ensure_folder(out_dir)
 clear_folder(tmp_dir)
 
 os.chdir(base_dir + tmp_dir)
+print_check()
 
 
-logging.info(f"Fetching frames...")
 fetch_frames(imgpath, cwd, framenaming)
 
 # sorted list of frames
@@ -45,8 +42,7 @@ caption = fit_caption_to_frame(Image.open(cwd + frames[0]), caption)
 
 
 # apply to each frame
-for i, frame in enumerate(frames):
-    logging.info(f"Applying caption to frame {i+1}/{len(frames)}...")
+for i, frame in tqdm(enumerate(frames), desc="Applying caption", unit="frame"):
     frame_img = Image.open(cwd + frame)
 
     captioned = apply_caption(frame_img, caption)
@@ -61,9 +57,12 @@ fname = generate_name(captiontext) + ".gif"
 gif_from_frames(fname, cwd, framenaming)
 gifsicle_optimize(cwd + fname)
 
-logging.info(f"Moving result to {out_dir + fname}...")
+print_begin(f"Moving result to {out_dir + fname}")
 os.replace(cwd + fname, base_dir + out_dir + fname)
-logging.info("Cleaning up working directory...")
-clear_folder(cwd)
+print_check()
 
-logging.info(f"Finished!")
+print_begin("Cleaning up working directory")
+clear_folder(cwd)
+print_check()
+
+print(f"Finished!")

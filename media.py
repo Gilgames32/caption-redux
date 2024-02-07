@@ -1,13 +1,12 @@
 import os
-import logging
 import requests
+from halo import Halo
 
-from util import *
+from util import cwd, framenaming, silence_tools, print_begin
 
 
 def get_media_link(url: str) -> str:
     if "//" in url:
-        logging.info("Fetching from url...")
         if "tenor.com/view" in url:
             url = (
                 requests.get(url)
@@ -16,14 +15,14 @@ def get_media_link(url: str) -> str:
                 .split('"')[2]
             )
         # more to come
-    else:
-        logging.info("Fetching from filesystem...")
 
     return url
 
 
 def fetch_frames(imgpath: str, path: str = cwd, framename: str = framenaming):
+    spinner = Halo(text="Fetching frames", spinner="dots")
     os.system(
         f'ffmpeg -i "{get_media_link(imgpath)}" "{path}{framename}" -y \
         {"-hide_banner -loglevel panic" if silence_tools else ""}'
     )
+    spinner.stop_and_persist("✔")

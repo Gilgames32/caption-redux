@@ -1,9 +1,9 @@
-import logging
 from emoji import emojize
 from textwrap import wrap
 from PIL import Image, ImageFont, ImageDraw
-from imgutil import *
+from imgutil import get_width, get_height
 from typing import List
+from util import print_begin, print_check
 
 
 # setup font
@@ -25,7 +25,8 @@ background_color = "#FFFFFF"
 
 # converts emojis and generates the wrapped lines
 def generate_wrapped_lines(texto: str) -> List[str]:
-    logging.info("Wrapping text...")
+    print_begin("Wrapping text")
+    
     # convert emojis
     # texto = "when\n\nthe the the the the the the the the the the the y"
     texto = emojize(texto, variant="emoji_type", language="alias")
@@ -37,12 +38,15 @@ def generate_wrapped_lines(texto: str) -> List[str]:
     wrapped_lines = sum(
         [wrap(line, width=22) if line != "" else list(" ") for line in lines], []
     )
+
+    print_check()
     return wrapped_lines
 
 
 # genereates the caption from the text
 def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
-    logging.info("Rasterizing text...")
+    print_begin("Rasterizing text")
+    
     # generate line images
     line_images = []
     for line in wrapped_lines:
@@ -91,7 +95,7 @@ def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
         merged_lines,
     )
 
-    # caption.show() # debug
+    print_check()
     return caption
 
 
@@ -104,10 +108,13 @@ def expand_image_canvas(frame: Image.Image, expand_top: int, color="#FFF") -> Im
 
 # resizes the caption so its width matches the frames
 def fit_caption_to_frame(frame: Image.Image, caption: Image.Image) -> Image.Image:
-    logging.info("Resizing caption...")
+    print_begin("Resizing caption")
+    
     caption = caption.resize(
         (frame.width, int(float(caption.height) / caption.width * frame.width))
     )
+    
+    print_check()
     return caption
 
 

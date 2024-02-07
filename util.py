@@ -8,6 +8,12 @@ silence_tools = True
 cwd = "./"
 framenaming = "frame_%05d.png"
 
+def print_begin(txt: str):
+    print(txt + ": ", end="")
+
+def print_check():
+    print("✔")
+
 
 def ensure_folder(path: str):
     if not os.path.exists(path):

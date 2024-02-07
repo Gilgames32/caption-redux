@@ -30,6 +30,7 @@ this project focuses on an easier to use and maintain version of the now archive
 - try to use memory instead of much priceous ssd (stupit)
 - size compression before/after, warn if its above 25mb
 - loading bar
+- figure out why halo and tqdm dont work -w-
 
 
 
