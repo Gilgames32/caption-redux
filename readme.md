@@ -12,6 +12,7 @@ one small issue tho, its unmaintained, deprecated, and its code is hard to read
 this project focuses on an easier to use and maintain version of the now archived repo
 
 ## plans:
+- exception handling
 - png captions
 - png optimization
 - video caption
@@ -24,7 +25,11 @@ this project focuses on an easier to use and maintain version of the now archive
 - cache system
 - being able to process multiple captions at once
 - wider range of supported gif hosting sites
-
+- option to resize the gif to match the caption width and not the other way around
+- requirements.txt
+- try to use memory instead of much priceous ssd (stupit)
+- size compression before/after, warn if its above 25mb
+- loading bar
 
 
 

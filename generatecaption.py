@@ -1,3 +1,4 @@
+import logging
 from emoji import emojize
 from textwrap import wrap
 from PIL import Image, ImageFont, ImageDraw
@@ -24,6 +25,7 @@ background_color = "#FFFFFF"
 
 # converts emojis and generates the wrapped lines
 def generate_wrapped_lines(texto: str) -> List[str]:
+    logging.info("Wrapping text...")
     # convert emojis
     # texto = "when\n\nthe the the the the the the the the the the the y"
     texto = emojize(texto, variant="emoji_type", language="alias")
@@ -40,6 +42,7 @@ def generate_wrapped_lines(texto: str) -> List[str]:
 
 # genereates the caption from the text
 def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
+    logging.info("Rasterizing text...")
     # generate line images
     line_images = []
     for line in wrapped_lines:
@@ -101,6 +104,7 @@ def expand_image_canvas(frame: Image.Image, expand_top: int, color="#FFF") -> Im
 
 # resizes the caption so its width matches the frames
 def fit_caption_to_frame(frame: Image.Image, caption: Image.Image) -> Image.Image:
+    logging.info("Resizing caption...")
     caption = caption.resize(
         (frame.width, int(float(caption.height) / caption.width * frame.width))
     )
