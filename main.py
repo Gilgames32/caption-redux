@@ -55,7 +55,7 @@ gif_from_frames(fname, cwd, framenaming)
 gifsicle_optimize(cwd + fname)
 
 os.replace(cwd + fname, base_dir + out_dir + fname)
-clear_folder(tmp_dir)
+clear_folder(cwd)
 
 
 print("Done")
