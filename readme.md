@@ -33,7 +33,9 @@ this project focuses on an easier to use and maintain version of the now archive
 - make it retain the original gif speed
 - emoji styles
 - force empty emoji cache
-
+- foce gif output
+- gif optimization options
+- proper wrapping with emojis
 
 
 

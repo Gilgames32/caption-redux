@@ -51,15 +51,25 @@ for i, frame in tqdm(enumerate(frames), desc="Applying caption", unit="frame"):
     frame_img.close()
 
 
-fname = generate_name(captiontext) + ".gif"
+fname = generate_name(captiontext)
 
-# make gif
-gif_from_frames(fname, cwd, framenaming)
-gifsicle_optimize(cwd + fname)
+if len(frames) <= 1:    
+    fname += ".png"
+    # todo: png optimization
+    print_begin(f"Moving result to {out_dir + fname}")
+    os.replace(cwd + frames[0], base_dir + out_dir + fname)
+    print_check()
 
-print_begin(f"Moving result to {out_dir + fname}")
-os.replace(cwd + fname, base_dir + out_dir + fname)
-print_check()
+else:
+    fname += ".gif"
+    # make gif
+    gif_from_frames(fname, cwd, framenaming)
+    # optimize gif
+    gifsicle_optimize(cwd + fname)
+
+    print_begin(f"Moving result to {out_dir + fname}")
+    os.replace(cwd + fname, base_dir + out_dir + fname)
+    print_check()
 
 print_begin("Cleaning up working directory")
 clear_folder(cwd)

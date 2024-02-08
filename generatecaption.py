@@ -37,6 +37,8 @@ def generate_wrapped_lines(texto: str) -> List[str]:
     # wrap text
     lines = texto.split("\n")
     # im sorry
+    # emojies kidna break wrapping !!!
+    # todo: own wrapper
     wrapped_lines = sum(
         [wrap(line, width=22) if line != "" else list(" ") for line in lines], []
     )
@@ -79,6 +81,7 @@ def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
         line_image = line_image.crop(line_image.getbbox())
 
         line_images.append(line_image)
+        line_image.show()
 
     # merge line images onto one image
     merged_lines = Image.new(color_mode, (max_width, max_width * 5), (0,) * 4)
@@ -106,7 +109,7 @@ def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
         ),
         merged_lines,
     )
-
+    caption.show()
     print_check()
     return caption
 
