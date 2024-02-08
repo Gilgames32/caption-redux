@@ -1,8 +1,10 @@
-from emoji import emojize
+from emoji import emojize, is_emoji
 from textwrap import wrap
 from PIL import Image, ImageFont, ImageDraw
 from imgutil import get_width, get_height
 from typing import List
+
+from emojiutil import get_emoji_image
 from util import print_begin, print_check
 
 
@@ -58,11 +60,21 @@ def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
 
         x = 0
         for character in line:
-            # todo: emojis
-            line_draw.text(
-                xy=(x, font_avg_height // 2), text=character, font=font, fill=text_color
-            )
-            x += get_width(font, character)
+            # emojis getting the special treatment
+            if is_emoji(character):
+                emoji_image = get_emoji_image(character)
+                emoji_image = emoji_image.resize((int(font_avg_height*0.8),) * 2)
+		
+                line_image.paste(emoji_image, (x, font_avg_height // 2))
+                
+                x += emoji_image.width
+
+            # the rest of the characters
+            else:
+                line_draw.text(
+                    xy=(x, font_avg_height // 2), text=character, font=font, fill=text_color
+                )
+                x += get_width(font, character)
 
         line_image = line_image.crop(line_image.getbbox())
 

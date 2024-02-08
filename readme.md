@@ -17,7 +17,6 @@ this project focuses on an easier to use and maintain version of the now archive
 - png optimization
 - video caption
 - video optimization
-- emoji support
 - font, color, and emoji host configuration
 - discord emoji support
 - fancier cli
@@ -31,7 +30,9 @@ this project focuses on an easier to use and maintain version of the now archive
 - size compression before/after, warn if its above 25mb
 - loading bar
 - figure out why halo and tqdm dont work -w-
-- make it retain the original speed
+- make it retain the original gif speed
+- emoji styles
+- force empty emoji cache
 
 
 

@@ -15,4 +15,4 @@ while imgpath == "":
 
 captiontext = args.text
 while captiontext == "":
-    captiontext = input("\nEnter caption: ")
+    captiontext = input("Enter caption: ")
