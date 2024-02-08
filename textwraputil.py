@@ -9,7 +9,7 @@ def add_emoji_weight(text: str) -> str:
     weighted_text = "" 
     for c in text:
         if is_emoji(c):
-            weighted_text += c
+            weighted_text += c * 2
         weighted_text += c
     return weighted_text
 
@@ -22,8 +22,8 @@ def remove_emoji_weight(lines: List[str]) -> List[str]:
         while ci < len(line):
             character = line[ci]
             unweighted_text += character
-            ci += 2 if is_emoji(character) else 1
-        ci -= len(line) # if it split a double in half, we carry ci to the next line
+            ci += 3 if is_emoji(character) else 1
+        ci -= len(line) # if it split a triple, we carry ci to the next line
         lines[i] = unweighted_text
 
     return lines

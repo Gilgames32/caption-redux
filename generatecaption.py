@@ -47,7 +47,7 @@ def generate_caption_image(rawtext: str) -> Image.Image:
                     character = custom_emotes.pop(0)
 
                 emoji_image = get_emoji_image(character)
-                emoji_image = emoji_image.resize((int(font_avg_height*0.8),) * 2)
+                emoji_image = emoji_image.resize((int(font_size),) * 2)
 		
                 line_image.paste(emoji_image, (x, font_avg_height // 2))
                 
