@@ -1,8 +1,7 @@
 import os
 import requests
-from halo import Halo
 
-from util import cwd, framenaming, silence_tools, print_begin
+from util import cwd, framenaming, silence_tools, print_begin, print_check
 
 
 def get_media_link(url: str) -> str:
@@ -20,9 +19,9 @@ def get_media_link(url: str) -> str:
 
 
 def fetch_frames(imgpath: str, path: str = cwd, framename: str = framenaming):
-    spinner = Halo(text="Fetching frames", spinner="dots")
+    print_begin("Fetching frames")
     os.system(
         f'ffmpeg -i "{get_media_link(imgpath)}" "{path}{framename}" -y \
         {"-hide_banner -loglevel panic" if silence_tools else ""}'
     )
-    spinner.stop_and_persist("✔")
+    print_check()
