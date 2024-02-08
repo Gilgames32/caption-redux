@@ -44,7 +44,7 @@ def weighted_textwrap(text: str):
     text = add_emoji_weight(text)
 
     # handle explicit linebreaks
-    lines = text.split("\n")
+    lines = text.split(r"\n")
 
     # lol
     wrapped_lines = sum(
