@@ -1,11 +1,11 @@
-from emoji import emojize, is_emoji
-from textwrap import wrap
+from emoji import is_emoji
 from PIL import Image, ImageFont, ImageDraw
 from imgutil import get_width, get_height
 from typing import List
 
 from emojiutil import get_emoji_image
 from util import print_begin, print_check
+from textwraputil import weighted_textwrap
 
 
 # setup font
@@ -25,32 +25,11 @@ text_color = "#000000"
 background_color = "#FFFFFF"
 
 
-# converts emojis and generates the wrapped lines
-def generate_wrapped_lines(texto: str) -> List[str]:
-    print_begin("Wrapping text")
-    
-    # convert emojis
-    # texto = "when\n\nthe the the the the the the the the the the the y"
-    texto = emojize(texto, variant="emoji_type", language="alias")
-    texto = texto.strip()
-
-    # wrap text
-    lines = texto.split("\n")
-    # im sorry
-    # emojies kidna break wrapping !!!
-    # todo: own wrapper
-    wrapped_lines = sum(
-        [wrap(line, width=22) if line != "" else list(" ") for line in lines], []
-    )
-
-    print_check()
-    return wrapped_lines
-
-
 # genereates the caption from the text
-def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
+def generate_caption_image(rawtext: str) -> Image.Image:
+    wrapped_lines, custom_emotes = weighted_textwrap(rawtext)
+
     print_begin("Rasterizing text")
-    
     # generate line images
     line_images = []
     for line in wrapped_lines:
@@ -64,6 +43,9 @@ def generate_caption_image(wrapped_lines: List[str]) -> Image.Image:
         for character in line:
             # emojis getting the special treatment
             if is_emoji(character):
+                if character == "🦊":
+                    character = custom_emotes.pop(0)
+
                 emoji_image = get_emoji_image(character)
                 emoji_image = emoji_image.resize((int(font_avg_height*0.8),) * 2)
 		

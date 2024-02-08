@@ -13,12 +13,10 @@ this project focuses on an easier to use and maintain version of the now archive
 
 ## plans:
 - exception handling
-- png captions
 - png optimization
 - video caption
 - video optimization
 - font, color, and emoji host configuration
-- discord emoji support
 - fancier cli
 - gui
 - cache system
@@ -35,7 +33,7 @@ this project focuses on an easier to use and maintain version of the now archive
 - force empty emoji cache
 - foce gif output
 - gif optimization options
-- proper wrapping with emojis
+- use subprocesses
 
 
 

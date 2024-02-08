@@ -7,9 +7,9 @@ def get_size(font: ImageFont.FreeTypeFont, text: str) -> Tuple[int, int]:
 
 
 def get_width(font: ImageFont.FreeTypeFont, text: str) -> int:
-    left, top, right, bottom = font.getbbox(text)
+    left, _, right, _ = font.getbbox(text)
     return right - left
 
 def get_height(font: ImageFont.FreeTypeFont, text: str):
-    left, top, right, bottom = font.getbbox(text)
+    _, top, _, bottom = font.getbbox(text)
     return bottom - top

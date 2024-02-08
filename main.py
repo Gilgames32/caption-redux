@@ -7,7 +7,6 @@ from args import imgpath, captiontext
 from media import fetch_frames
 from generatecaption import (
     generate_caption_image,
-    generate_wrapped_lines,
     fit_caption_to_frame,
     apply_caption,
 )
@@ -37,7 +36,7 @@ frames = sorted(
 
 
 # generate caption image
-caption = generate_caption_image(generate_wrapped_lines(captiontext))
+caption = generate_caption_image(captiontext)
 caption = fit_caption_to_frame(Image.open(cwd + frames[0]), caption)
 
 
