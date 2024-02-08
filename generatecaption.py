@@ -63,7 +63,6 @@ def generate_caption_image(rawtext: str) -> Image.Image:
         line_image = line_image.crop(line_image.getbbox())
 
         line_images.append(line_image)
-        line_image.show()
 
     # merge line images onto one image
     merged_lines = Image.new(color_mode, (max_width, max_width * 5), (0,) * 4)
@@ -91,7 +90,6 @@ def generate_caption_image(rawtext: str) -> Image.Image:
         ),
         merged_lines,
     )
-    caption.show()
     print_check()
     return caption
 
