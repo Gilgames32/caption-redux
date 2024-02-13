@@ -12,7 +12,7 @@ from generatecaption import (
 )
 from makegif import gif_from_frames, gifsicle_optimize
 
-if __name__ == '__main__':
+def main():
     # working directory
     base_dir = os.path.abspath(os.path.dirname(__file__)) + "/"
     tmp_dir = "tmp/"
@@ -75,3 +75,6 @@ if __name__ == '__main__':
     print_check()
     
     print(f"Finished!")
+
+if __name__ == '__main__':
+    main()
