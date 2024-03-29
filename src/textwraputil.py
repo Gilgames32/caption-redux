@@ -6,7 +6,7 @@ from typing import List
 
 def add_emoji_weight(text: str) -> str:
     # how tf would one write regex for emojis lol
-    weighted_text = "" 
+    weighted_text = ""
     for c in text:
         if is_emoji(c):
             weighted_text += c * 2
@@ -23,7 +23,7 @@ def remove_emoji_weight(lines: List[str]) -> List[str]:
             character = line[ci]
             unweighted_text += character
             ci += 3 if is_emoji(character) else 1
-        ci -= len(line) # if it split a triple, we carry ci to the next line
+        ci -= len(line)  # if it split a triple, we carry ci to the next line
         lines[i] = unweighted_text
 
     return lines
@@ -55,5 +55,3 @@ def weighted_textwrap(text: str):
     wrapped_lines = remove_emoji_weight(wrapped_lines)
 
     return wrapped_lines, emotes
-
-

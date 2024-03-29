@@ -1,7 +1,6 @@
 from emoji import is_emoji
 from PIL import Image, ImageFont, ImageDraw
 from imgutil import get_width, get_height
-from typing import List
 
 from emojiutil import get_emoji_image
 from util import print_begin, print_check
@@ -48,15 +47,18 @@ def generate_caption_image(rawtext: str) -> Image.Image:
 
                 emoji_image = get_emoji_image(character)
                 emoji_image = emoji_image.resize((int(font_size),) * 2)
-		
+
                 line_image.paste(emoji_image, (x, font_avg_height // 2))
-                
+
                 x += emoji_image.width
 
             # the rest of the characters
             else:
                 line_draw.text(
-                    xy=(x, font_avg_height // 2), text=character, font=font, fill=text_color
+                    xy=(x, font_avg_height // 2),
+                    text=character,
+                    font=font,
+                    fill=text_color,
                 )
                 x += get_width(font, character)
 
@@ -104,11 +106,11 @@ def expand_image_canvas(frame: Image.Image, expand_top: int, color="#FFF") -> Im
 # resizes the caption so its width matches the frames
 def fit_caption_to_frame(frame: Image.Image, caption: Image.Image) -> Image.Image:
     print_begin("Resizing caption")
-    
+
     caption = caption.resize(
         (frame.width, int(float(caption.height) / caption.width * frame.width))
     )
-    
+
     print_check()
     return caption
 

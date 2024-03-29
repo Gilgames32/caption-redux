@@ -9,10 +9,12 @@ silence_status = False
 cwd = "./"
 framenaming = "frame_%05d.png"
 
+
 def print_begin(txt: str):
     if silence_status:
         return
     print(txt + ": ", end="")
+
 
 def print_check():
     if silence_status:

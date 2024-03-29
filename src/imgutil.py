@@ -1,6 +1,7 @@
 from PIL import ImageFont
 from typing import Tuple
 
+
 def get_size(font: ImageFont.FreeTypeFont, text: str) -> Tuple[int, int]:
     left, top, right, bottom = font.getbbox(text)
     return right - left, bottom - top
@@ -9,6 +10,7 @@ def get_size(font: ImageFont.FreeTypeFont, text: str) -> Tuple[int, int]:
 def get_width(font: ImageFont.FreeTypeFont, text: str) -> int:
     left, _, right, _ = font.getbbox(text)
     return right - left
+
 
 def get_height(font: ImageFont.FreeTypeFont, text: str):
     _, top, _, bottom = font.getbbox(text)

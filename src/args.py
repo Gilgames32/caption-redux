@@ -1,9 +1,9 @@
 import argparse
 
-parser = argparse.ArgumentParser(description='Caption Generator')
+parser = argparse.ArgumentParser(description="Caption Generator")
 
-parser.add_argument('-i', '--image', help='url or path to the image', default="")
-parser.add_argument('-t', '--text', help='caption text', default="")
+parser.add_argument("-i", "--image", help="url or path to the image", default="")
+parser.add_argument("-t", "--text", help="caption text", default="")
 
 args = parser.parse_args()
 
