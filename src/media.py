@@ -1,7 +1,7 @@
 import os
 import requests
 
-from util import cwd, framenaming, silence_tools, print_begin, print_check
+from .util import cwd, framenaming, silence_tools, print_begin, print_check
 
 
 def get_media_link(url: str) -> str:

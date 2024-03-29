@@ -1,10 +1,10 @@
 from emoji import is_emoji
 from PIL import Image, ImageFont, ImageDraw
-from imgutil import get_width, get_height
 
-from emojiutil import get_emoji_image
-from util import print_begin, print_check
-from textwraputil import weighted_textwrap
+from .imgutil import get_width, get_height
+from .emojiutil import get_emoji_image
+from .util import print_begin, print_check
+from .textwraputil import weighted_textwrap
 
 
 # setup font

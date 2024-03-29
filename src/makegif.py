@@ -1,6 +1,6 @@
-import os
+import subprocess, os
 
-from util import cwd, framenaming, silence_tools, print_begin, print_check
+from .util import cwd, framenaming, silence_tools, print_begin, print_check, print_tool
 
 palette = "palette.png"
 
@@ -9,10 +9,9 @@ palette = "palette.png"
 def gif_from_frames(fname: str, path: str = cwd, framenames: str = framenaming):
     print_begin("Generating gif palette")
     # generate palette
-    os.system(
-        f'ffmpeg -i "{path}{framenames}" -vf palettegen=reserve_transparent=1 -gifflags -offsetting "{path}{palette}" -y \
-        {"-hide_banner -loglevel panic" if silence_tools else ""}'
-    )
+    sp = subprocess.run(["ffmpeg", "-i", path + framenames, "-vf", "palettegen=reserve_transparent=1", "-gifflags", "-offsetting", path + palette, "-y"], check=True, text=True)
+    print_tool(sp.stdout)
+
     print_check()
 
     print_begin("Generating gif")

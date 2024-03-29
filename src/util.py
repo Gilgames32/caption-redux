@@ -16,6 +16,12 @@ def print_begin(txt: str):
     print(txt + ": ", end="")
 
 
+def print_tool(txt: str):
+    if silence_tools:
+        return
+    print(txt)
+
+
 def print_check():
     if silence_status:
         return

@@ -1,8 +1,8 @@
-import os
+import sys, os
 from PIL import Image
 
-import util
-from util import (
+from . import util
+from .util import (
     cwd,
     framenaming,
     ensure_folder,
@@ -10,15 +10,15 @@ from util import (
     print_check,
     print_begin,
 )
-from media import fetch_frames
-from generatecaption import (
+from .media import fetch_frames
+from .generatecaption import (
     generate_caption_image,
     fit_caption_to_frame,
     apply_caption,
 )
-from makegif import gif_from_frames, gifsicle_optimize
+from .makegif import gif_from_frames, gifsicle_optimize
 
-import emojiutil
+from . import emojiutil
 
 
 def caption(caption_link: str, caption_text: str, silent=False) -> str:
@@ -27,7 +27,7 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
     print_begin("Initializing directories")
 
     # project root
-    base_dir = os.path.abspath(os.path.dirname(__file__)) + "/"
+    base_dir = os.path.abspath(os.path.dirname(sys.argv[0])) + "/"
     os.chdir(base_dir)
 
     # tmp
