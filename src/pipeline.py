@@ -6,6 +6,7 @@ from .util import (
     cwd,
     framenaming,
     ensure_folder,
+    clear_folder,
     generate_name,
     print_check,
     print_begin,
@@ -93,8 +94,9 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
         print_check()
 
     print_begin("Cleaning up working directory")
-    # clear_folder(cwd)
-    os.rmdir(base_dir + tmp_rdir)
+    clear_folder(cwd)
+    os.chdir(base_dir)
+    os.rmdir(tmp_rdir)
     print_check()
 
     return base_dir + out_rdir + caption_id
