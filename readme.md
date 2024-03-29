@@ -11,6 +11,15 @@ one small issue tho, its unmaintained, deprecated, and its code is hard to read
 
 this project focuses on an easier to use and maintain version of the now archived repo
 
+## usage
+a more detailed usage coming soon
+for advanced users: 
+- add these to the path
+    - ffmpeg
+    - gifsicle
+- install missing python packages (newest should work)
+ 
+
 ## plans:
 - exception handling
 - png optimization
@@ -20,7 +29,6 @@ this project focuses on an easier to use and maintain version of the now archive
 - fancier cli
 - gui
 - cache system
-- being able to process multiple captions at once
 - wider range of supported gif hosting sites
 - option to resize the gif to match the caption width and not the other way around
 - requirements.txt
@@ -33,7 +41,6 @@ this project focuses on an easier to use and maintain version of the now archive
 - force empty emoji cache
 - foce gif output
 - gif optimization options
-- use subprocesses
 
 
 
