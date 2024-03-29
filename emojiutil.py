@@ -14,7 +14,6 @@ def get_emoji_image(emoji_character: str) -> Image.Image:
 		emoji_name = emoji_character[-20:-1]
 
 	# check if we already have it downloaded
-	ensure_folder(emo_dir)
 	if not os.path.exists(emo_dir + emoji_name + ".png"):
 		if(is_emoji(emoji_character)):
 			response = requests.get(f"https://emojicdn.elk.sh/{emoji_character}?style=twitter", stream=True)

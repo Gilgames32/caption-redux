@@ -38,6 +38,9 @@ def generate_name(texto: str) -> str:
     # remove repeating underscores
     fname = re.sub("_{2,}", "_", fname)
     # trim and and random letters
-    fname = fname[:16] + random_string(8)
+    fname = fname[:16]
+    if fname[-1] != "_":
+        fname += "_"
+    fname += random_string(8)
 
     return fname

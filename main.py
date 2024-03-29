@@ -12,18 +12,36 @@ from generatecaption import (
 )
 from makegif import gif_from_frames, gifsicle_optimize
 
+import emojiutil
+
 def main():
-    # working directory
-    base_dir = os.path.abspath(os.path.dirname(__file__)) + "/"
-    tmp_dir = "tmp/"
-    out_dir = "out/"
-    
     print_begin("Initializing directories")
-    ensure_folder(tmp_dir)
-    ensure_folder(out_dir)
-    clear_folder(tmp_dir)
+
+    # project root
+    base_dir = os.path.abspath(os.path.dirname(__file__)) + "/"
+    os.chdir(base_dir)
     
-    os.chdir(base_dir + tmp_dir)
+    # tmp
+    tmp_rdir = "tmp/"
+    ensure_folder(tmp_rdir)
+
+    # output
+    out_rdir = "out/"
+    ensure_folder(out_rdir)
+
+    # emoji cache
+    emojiutil.emo_dir = base_dir + "emojis/"
+    ensure_folder(emojiutil.emo_dir)
+
+
+    # generate unique folder
+    caption_id = generate_name(captiontext)
+    while os.path.exists(tmp_rdir + caption_id):
+        caption_id = generate_name(captiontext)
+    tmp_rdir += caption_id
+    ensure_folder(tmp_rdir)
+    
+    os.chdir(base_dir + tmp_rdir)
     print_check()
     
     
@@ -50,28 +68,29 @@ def main():
         frame_img.close()
     
     
-    fname = generate_name(captiontext)
+    
     
     if len(frames) <= 1:    
-        fname += ".png"
+        caption_id += ".png"
         # todo: png optimization
-        print_begin(f"Moving result to {out_dir + fname}")
-        os.replace(cwd + frames[0], base_dir + out_dir + fname)
+        print_begin(f"Moving result to {out_rdir + caption_id}")
+        os.replace(cwd + frames[0], base_dir + out_rdir + caption_id)
         print_check()
     
     else:
-        fname += ".gif"
+        caption_id += ".gif"
         # make gif
-        gif_from_frames(fname, cwd, framenaming)
+        gif_from_frames(caption_id, cwd, framenaming)
         # optimize gif
-        gifsicle_optimize(cwd + fname)
+        gifsicle_optimize(cwd + caption_id)
     
-        print_begin(f"Moving result to {out_dir + fname}")
-        os.replace(cwd + fname, base_dir + out_dir + fname)
+        print_begin(f"Moving result to {out_rdir + caption_id}")
+        os.replace(cwd + caption_id, base_dir + out_rdir + caption_id)
         print_check()
     
     print_begin("Cleaning up working directory")
-    clear_folder(cwd)
+    # clear_folder(cwd)
+    os.rmdir(base_dir + tmp_rdir)
     print_check()
     
     print(f"Finished!")
