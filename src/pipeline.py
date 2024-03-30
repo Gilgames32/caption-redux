@@ -33,7 +33,7 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
     print_begin("Initializing directories")
 
     # project root
-    base_dir = os.path.abspath(os.path.dirname(sys.argv[0])) + "/"
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
     os.chdir(base_dir)
 
     # tmp
