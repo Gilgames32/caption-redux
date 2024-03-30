@@ -3,6 +3,7 @@ import random
 import string
 import re
 from unidecode import unidecode
+from emoji import demojize
 
 silence_tools = True
 silence_status = False
@@ -47,7 +48,7 @@ def random_string(length):
 
 def generate_name(texto: str) -> str:
     # filenaming pattern, only letters, numbers and underscore
-    fname = re.sub("[^\w_]", "_", unidecode(texto))
+    fname = re.sub("[^\w_]", "_", unidecode(demojize(texto)))
     # remove repeating underscores
     fname = re.sub("_{2,}", "_", fname)
     # trim and and random letters
