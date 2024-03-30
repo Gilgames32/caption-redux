@@ -1,6 +1,10 @@
 from src.pipeline import caption
-from src.args import imgpath, captiontext
+from src import args
 
 if __name__ == "__main__":
-    outpath = caption(imgpath, captiontext)
-    print(f"\nFinished caption at {outpath}")
+    args.correctparse()
+    try:
+        outpath = caption(args.imgpath, args.captiontext)
+        print(f"\nFinished caption at {outpath}")
+    except Exception as e:
+        print(e)
