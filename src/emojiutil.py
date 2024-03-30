@@ -1,5 +1,6 @@
 import os
 import io
+import re
 import requests
 from PIL import Image
 from emoji import demojize, is_emoji
@@ -11,7 +12,7 @@ def get_emoji_image(emoji_character: str) -> Image.Image:
     if is_emoji(emoji_character):
         emoji_name = demojize(emoji_character, delimiters=("", ""))
     else:
-        emoji_name = emoji_character[-19:-1]
+        emoji_name = re.search(":[\d]+>", emoji_character).group()[1:-1]
 
     # check if we already have it downloaded
     if not os.path.exists(emo_dir + emoji_name + ".png"):
