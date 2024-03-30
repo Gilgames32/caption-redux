@@ -20,9 +20,14 @@ from .generatecaption import (
 from .makegif import gif_from_frames, gifsicle_optimize
 
 from . import emojiutil
+from .packages import check_dependency
 
 
 def caption(caption_link: str, caption_text: str, silent=False) -> str:
+    check_dependency("ffmpeg")
+    check_dependency("gifsicle")
+
+    
     util.silence_status = silent
 
     print_begin("Initializing directories")
