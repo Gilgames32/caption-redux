@@ -1,0 +1,4 @@
+argparse
+pillow
+emoji
+unidecode
