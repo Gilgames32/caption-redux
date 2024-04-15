@@ -1,5 +1,6 @@
 import os
 import logging
+import time
 from PIL import Image
 
 from .util import (
@@ -21,7 +22,7 @@ from . import emojiutil
 from .packages import check_dependency
 
 
-def caption(caption_link: str, caption_text: str, silent=False) -> str:
+def caption(caption_link: str, caption_text: str) -> str:
     check_dependency("ffmpeg")
     check_dependency("gifsicle")
 
@@ -67,6 +68,7 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
 
     # apply to each frame
     logging.info("Applying caption to frames...")
+    st = time.time()
     for frame in frames:
         frame_img = Image.open(cwd + frame)
 
@@ -74,7 +76,8 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
         captioned.save(cwd + frame)
 
         frame_img.close()
-    logging.info("Applied caption to frames") # TODO: time
+    et = time.time()
+    logging.info(f"Applied caption to frames in {et - st} seconds")
 
     if len(frames) <= 1:
         logging.info("Single frame detected, saving as png")
