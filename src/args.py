@@ -1,3 +1,4 @@
+import logging
 import argparse
 
 captiontext: str = None
@@ -9,6 +10,7 @@ parser.add_argument("-t", "--text", help="caption text", default="")
 
 def correctparse():
     args = parser.parse_args()
+    logging.debug(f"Parsed arguments: {args}")
 
     # fill in arguments if none were given
     imgpath = args.image

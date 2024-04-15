@@ -1,11 +1,14 @@
 import os
 import requests
+import logging
+import subprocess
 
 from .util import cwd, framenaming, silence_tools, print_begin, print_check
 
 
 def get_media_link(url: str) -> str:
     if "//" in url:
+        logging.info("Found media link in supported image hosting site")
         if "tenor.com/view" in url:
             url = (
                 requests.get(url)
@@ -19,9 +22,7 @@ def get_media_link(url: str) -> str:
 
 
 def fetch_frames(imgpath: str, path: str = cwd, framename: str = framenaming):
-    print_begin("Fetching frames")
-    os.system(
-        f'ffmpeg -i "{get_media_link(imgpath)}" "{path}{framename}" -y \
-        {"-hide_banner -loglevel panic" if silence_tools else ""}'
-    )
-    print_check()
+    logging.info(f"Fetching frames from {imgpath}...")
+    sp = subprocess.run(["ffmpeg", "-i", get_media_link(imgpath), path + framename, "-y"], capture_output=True, check=True, text=True)
+    logging.debug(sp.stdout)  
+    logging.info(f"Fetched {len(os.listdir(path))} frames")
