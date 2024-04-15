@@ -2,6 +2,7 @@ import os
 import random
 import string
 import re
+import logging
 from unidecode import unidecode
 from emoji import demojize
 
@@ -11,27 +12,10 @@ cwd = "./"
 framenaming = "frame_%05d.png"
 
 
-def print_begin(txt: str):
-    if silence_status:
-        return
-    print(txt + ": ", end="")
-
-
-def print_tool(txt: str):
-    if silence_tools:
-        return
-    print(txt)
-
-
-def print_check():
-    if silence_status:
-        return
-    print("✔")
-
-
 def ensure_folder(path: str):
     if not os.path.exists(path):
         os.makedirs(path)
+        logging.info(f"Created directory {path}")
 
 
 def clear_folder(path: str):
@@ -39,6 +23,7 @@ def clear_folder(path: str):
         file_path = os.path.join(path, file)
         if os.path.isfile(file_path):
             os.remove(file_path)
+    logging.debug(f"Cleared {path}")
 
 
 def random_string(length):
@@ -57,4 +42,5 @@ def generate_name(texto: str) -> str:
         fname += "_"
     fname += random_string(8)
 
+    logging.debug(f"Generated name {fname} from {texto if len(texto) < 16 else texto[:16] + '...'}")
     return fname

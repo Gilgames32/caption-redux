@@ -1,15 +1,13 @@
-import sys, os
+import os
+import logging
 from PIL import Image
 
-from . import util
 from .util import (
     cwd,
     framenaming,
     ensure_folder,
     clear_folder,
     generate_name,
-    print_check,
-    print_begin,
 )
 from .media import fetch_frames
 from .generatecaption import (
@@ -28,9 +26,7 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
     check_dependency("gifsicle")
 
     
-    util.silence_status = silent
-
-    print_begin("Initializing directories")
+    logging.info("Initializing directories...")
 
     # project root
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
@@ -56,7 +52,7 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
     ensure_folder(tmp_rdir)
 
     os.chdir(base_dir + tmp_rdir)
-    print_check()
+    logging.debug(f"Working directory: {os.getcwd()}")
 
     fetch_frames(caption_link, cwd, framenaming)
 
@@ -70,7 +66,7 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
     caption = fit_caption_to_frame(Image.open(cwd + frames[0]), caption)
 
     # apply to each frame
-    print_begin("Applying caption to frames")
+    logging.info("Applying caption to frames...")
     for frame in frames:
         frame_img = Image.open(cwd + frame)
 
@@ -78,30 +74,32 @@ def caption(caption_link: str, caption_text: str, silent=False) -> str:
         captioned.save(cwd + frame)
 
         frame_img.close()
-    print_check()
+    logging.info("Applied caption to frames") # TODO: time
 
     if len(frames) <= 1:
+        logging.info("Single frame detected, saving as png")
+
         caption_id += ".png"
-        # todo: png optimization
-        print_begin(f"Moving result to {out_rdir + caption_id}")
+        # TODO: png optimization
+        
         os.replace(cwd + frames[0], base_dir + out_rdir + caption_id)
-        print_check()
 
     else:
+        logging.info("Multiple frames detected, creating gif")
+        
         caption_id += ".gif"
         # make gif
         gif_from_frames(caption_id, cwd, framenaming)
         # optimize gif
         gifsicle_optimize(cwd + caption_id)
 
-        print_begin(f"Moving result to {out_rdir + caption_id}")
         os.replace(cwd + caption_id, base_dir + out_rdir + caption_id)
-        print_check()
+    
+    logging.info(f"Moved result to {out_rdir + caption_id}")
 
-    print_begin("Cleaning up working directory")
+    logging.info("Cleaning up working directory...")
     clear_folder(cwd)
     os.chdir(base_dir)
     os.rmdir(tmp_rdir)
-    print_check()
 
     return base_dir + out_rdir + caption_id

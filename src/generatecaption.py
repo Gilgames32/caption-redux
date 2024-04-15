@@ -1,9 +1,9 @@
+import logging
 from emoji import is_emoji
 from PIL import Image, ImageFont, ImageDraw
 
 from .imgutil import get_width, get_height
 from .emojiutil import get_emoji_image
-from .util import print_begin, print_check
 from .textwraputil import weighted_textwrap
 
 
@@ -28,7 +28,7 @@ background_color = "#FFFFFF"
 def generate_caption_image(rawtext: str) -> Image.Image:
     wrapped_lines, custom_emotes = weighted_textwrap(rawtext)
 
-    print_begin("Rasterizing text")
+    logging.info("Rasterizing text...")
     # generate line images
     line_images = []
     for line in wrapped_lines:
@@ -42,7 +42,7 @@ def generate_caption_image(rawtext: str) -> Image.Image:
         for character in line:
             # emojis getting the special treatment
             if is_emoji(character):
-                if character == "🦊":
+                if character == "🦊":   # :3
                     character = custom_emotes.pop(0)
 
                 emoji_image = get_emoji_image(character)
@@ -63,19 +63,23 @@ def generate_caption_image(rawtext: str) -> Image.Image:
                 x += get_width(font, character)
 
         line_image = line_image.crop(line_image.getbbox())
+        logging.debug(f"Rasterized {line} to image, size: {line_image.size}")
 
         line_images.append(line_image)
 
     # merge line images onto one image
     merged_lines = Image.new(color_mode, (max_width, max_width * 5), (0,) * 4)
+    logging.debug(f"Created merged canvas, size: {merged_lines.size}")
 
     y = 0
-    for i, img in enumerate(line_images):
+    for img in line_images:
         # space between lines
         y += font_size * 1.28
         merged_lines.paste(img, ((merged_lines.width - img.width) // 2, int(y)), img)
+        logging.debug(f"Pasted line image at y = {int(y)}")
 
     merged_lines = merged_lines.crop(merged_lines.getbbox())
+    logging.debug(f"Cropped merged canvas, size: {merged_lines.size}")
 
     # generate background
     caption = Image.new(
@@ -92,7 +96,10 @@ def generate_caption_image(rawtext: str) -> Image.Image:
         ),
         merged_lines,
     )
-    print_check()
+    logging.debug(f"Added padding to caption, size: {caption.size}")
+
+    logging.info("Rasterized text")
+
     return caption
 
 
@@ -100,18 +107,16 @@ def generate_caption_image(rawtext: str) -> Image.Image:
 def expand_image_canvas(frame: Image.Image, expand_top: int, color="#FFF") -> Image.Image:
     expanded = Image.new(frame.mode, (frame.width, frame.height + expand_top), color)
     expanded.paste(frame, (0, expand_top))
+    logging.debug(f"Expanded image canvas from {frame.size} to {expanded.size}")
     return expanded
 
 
 # resizes the caption so its width matches the frames
 def fit_caption_to_frame(frame: Image.Image, caption: Image.Image) -> Image.Image:
-    print_begin("Resizing caption")
-
     caption = caption.resize(
         (frame.width, int(float(caption.height) / caption.width * frame.width))
     )
-
-    print_check()
+    logging.debug(f"Resized caption to match frame, size: {caption.size}")
     return caption
 
 
@@ -119,4 +124,5 @@ def fit_caption_to_frame(frame: Image.Image, caption: Image.Image) -> Image.Imag
 def apply_caption(frame: Image.Image, caption: Image.Image) -> Image.Image:
     captioned = expand_image_canvas(frame, caption.height)
     captioned.paste(caption)
+    logging.debug(f"Applied caption to frame")
     return captioned

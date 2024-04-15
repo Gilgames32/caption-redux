@@ -1,4 +1,5 @@
 import re
+import logging
 from textwrap import wrap
 from emoji import is_emoji, emojize
 from typing import List
@@ -53,5 +54,7 @@ def weighted_textwrap(text: str):
 
     # remove weight from text
     wrapped_lines = remove_emoji_weight(wrapped_lines)
+
+    logging.debug(f"Wrapped text into {len(wrapped_lines)} lines")
 
     return wrapped_lines, emotes
