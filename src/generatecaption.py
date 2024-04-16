@@ -112,9 +112,9 @@ def expand_image_canvas(frame: Image.Image, expand_top: int, color="#FFF") -> Im
 
 
 # resizes the caption so its width matches the frames
-def fit_caption_to_frame(frame: Image.Image, caption: Image.Image) -> Image.Image:
+def fit_caption_to_frame(width: int, caption: Image.Image) -> Image.Image:
     caption = caption.resize(
-        (frame.width, int(float(caption.height) / caption.width * frame.width))
+        (width, int(float(caption.height) / caption.width * width))
     )
     logging.debug(f"Resized caption to match frame, size: {caption.size}")
     return caption
