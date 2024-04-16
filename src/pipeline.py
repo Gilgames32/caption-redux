@@ -54,7 +54,9 @@ def caption(caption_link: str, caption_text: str) -> str:
     os.chdir(base_dir + tmp_rdir)
     logging.debug(f"Working directory: {os.getcwd()}")
 
-    
+
+    logging.info("Fetching media...")
+
     # check for supported sites
     caption_link = get_media_link(caption_link)
 
@@ -81,6 +83,7 @@ def caption(caption_link: str, caption_text: str) -> str:
         logging.debug(f"Local file detected at {source_path}")
     elif caption_link.startswith("https://"):
         source_path = __infn + "." + (ext if ext != "gif" else "mp4")
+        logging.info("Downloading media...")
         ffmpeg.input(caption_link).output(source_path).run(quiet=True)
     else:
         logging.warning(f"Invalid source: {caption_link}")
@@ -99,6 +102,8 @@ def caption(caption_link: str, caption_text: str) -> str:
             captioned_img.save(output_fname)
             # TODO: png optimization
     else:
+        logging.debug("Preparing video...")
+        st = time.time()
         # prepare sources
         source_vid = VideoFileClip(source_path)
         caption_img = fit_caption_to_frame(source_vid.w, caption_img)
@@ -116,8 +121,7 @@ def caption(caption_link: str, caption_text: str) -> str:
 
         # Export the final video
         captioned_vid = captioned_vid.set_duration(source_vid.duration)
-        logging.info("Writing video... (this may take a while)")
-        st = time.time()
+        logging.info("Writing video...")
         captioned_vid.write_videofile(output_fname, logger=None)
         et = time.time()
         logging.info(f"Finished writing video in {et - st} seconds")
@@ -131,7 +135,7 @@ def caption(caption_link: str, caption_text: str) -> str:
             logging.debug(f"Generated palette")
             ffmpeg.filter([ffmpeg.input(output_fname), ffmpeg.input(__palfne)], 'paletteuse', alpha_threshold=128).output(output_gif_path).run(quiet=True)
             et = time.time()
-            logging.debug(f"Converted video to gif in {et - st} seconds")
+            logging.info(f"Converted video to gif in {et - st} seconds")
             output_fname = output_gif_path
 
             # optimize gif
@@ -145,7 +149,7 @@ def caption(caption_link: str, caption_text: str) -> str:
 
     # TODO: cleanup on errors too
     logging.info("Cleaning up working directory...")
-    clear_folder(tmp_rdir)
+    clear_folder("./")
     os.chdir(base_dir)
     os.rmdir(tmp_rdir)
 
