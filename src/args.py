@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(description="Caption Generator")
 parser.add_argument("-i", "--image", help="url or path to the image", default="")
 parser.add_argument("-t", "--text", help="caption text", default="")
 
+
 def correctparse():
     global captiontext, imgpath
     args = parser.parse_args()

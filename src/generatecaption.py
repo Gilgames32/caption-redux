@@ -42,7 +42,7 @@ def generate_caption_image(rawtext: str) -> Image.Image:
         for character in line:
             # emojis getting the special treatment
             if is_emoji(character):
-                if character == "🦊":   # :3
+                if character == "🦊":  # :3
                     character = custom_emotes.pop(0)
 
                 emoji_image = get_emoji_image(character)
@@ -104,7 +104,9 @@ def generate_caption_image(rawtext: str) -> Image.Image:
 
 
 # makes space at the top so we can put the caption there
-def expand_image_canvas(frame: Image.Image, expand_top: int, color="#FFF") -> Image.Image:
+def expand_image_canvas(
+    frame: Image.Image, expand_top: int, color="#FFF"
+) -> Image.Image:
     expanded = Image.new(frame.mode, (frame.width, frame.height + expand_top), color)
     expanded.paste(frame, (0, expand_top))
     logging.debug(f"Expanded image canvas from {frame.size} to {expanded.size}")

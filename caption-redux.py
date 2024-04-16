@@ -4,9 +4,9 @@ import logging
 
 if __name__ != "__main__":
     quit()
-    
+
 logging.basicConfig(level=logging.INFO)
-logging.getLogger('PIL').setLevel(logging.WARNING)
+logging.getLogger("PIL").setLevel(logging.WARNING)
 
 args.correctparse()
 

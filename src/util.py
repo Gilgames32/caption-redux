@@ -37,5 +37,7 @@ def generate_name(texto: str) -> str:
         fname += "_"
     fname += random_string(8)
 
-    logging.debug(f"Generated name {fname} from {texto if len(texto) < 16 else texto[:16] + '...'}")
+    logging.debug(
+        f"Generated name {fname} from {texto if len(texto) < 16 else texto[:16] + '...'}"
+    )
     return fname

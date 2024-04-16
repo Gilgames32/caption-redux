@@ -22,11 +22,15 @@ def get_emoji_image(emoji_character: str) -> Image.Image:
     if not os.path.exists(emoji_path):
         logging.debug(f"Emoji {emoji_name} not found in cache, downloading...")
         if is_emoji(emoji_character):
-            response = requests.get(f"https://emojicdn.elk.sh/{emoji_character}?style=twitter", stream=True)
+            response = requests.get(
+                f"https://emojicdn.elk.sh/{emoji_character}?style=twitter", stream=True
+            )
             logging.debug(f"Downloaded {emoji_character} from emojicdn, style: twitter")
         else:
             # ignoring animated discord emotes
-            response = requests.get(f"https://cdn.discordapp.com/emojis/{emoji_name}.png", stream=True)
+            response = requests.get(
+                f"https://cdn.discordapp.com/emojis/{emoji_name}.png", stream=True
+            )
             logging.debug(f"Downloaded {emoji_name} from discord cdn")
 
         emoji_image = Image.open(io.BytesIO(response.content)).convert("RGBA")
