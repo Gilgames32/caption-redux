@@ -1,9 +1,9 @@
 import os
 import requests
 import logging
-import subprocess
+import ffmpeg
 
-from .util import cwd, framenaming
+__infn = "source"   # input file name
 
 
 def get_media_link(url: str) -> str:
@@ -21,8 +21,34 @@ def get_media_link(url: str) -> str:
     return url
 
 
-def fetch_frames(imgpath: str, path: str = cwd, framename: str = framenaming):
-    logging.info(f"Fetching frames from {imgpath}...")
-    sp = subprocess.run(["ffmpeg", "-i", get_media_link(imgpath), path + framename, "-y"], capture_output=True, check=True, text=True)
-    logging.debug(sp.stdout)
-    logging.info(f"Fetched {len(os.listdir(path))} frames")
+def determine_format(link: str) -> str:
+    probe = ffmpeg.probe(link)
+
+    if probe["format"]["format_name"] == "gif":
+        logging.debug("Gif detected")
+        return "gif"
+    
+    elif "nb_frames" not in probe["streams"][0] or probe["streams"][0]["nb_frames"] == '1':
+        logging.debug("No frame count or single frame attribute detected, output will be static")
+        logging.info("Static image detected")
+        return "png"
+
+    else:
+        logging.debug("Video detected")
+        return "mp4"
+    
+
+def fetch_source(link: str, ext: str) -> str:
+    # TODO: disable local files on servers
+    if os.path.exists(link):
+        logging.debug(f"Local file detected at {link}")
+        return link
+    elif link.startswith("https://"):
+        dl = __infn + "." + (ext if ext != "gif" else "mp4")
+        logging.info("Downloading media...")
+        ffmpeg.input(link).output(dl).run(quiet=True)
+        return dl
+    else:
+        logging.warning(f"Invalid source: {link}")
+        raise ValueError("Invalid source link")
+

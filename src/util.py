@@ -6,11 +6,6 @@ import logging
 from unidecode import unidecode
 from emoji import demojize
 
-silence_tools = True
-silence_status = False
-cwd = "./"
-framenaming = "frame_%05d.png"
-
 
 def ensure_folder(path: str):
     if not os.path.exists(path):
