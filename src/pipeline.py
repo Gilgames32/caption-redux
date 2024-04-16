@@ -9,13 +9,12 @@ from .media import determine_format, fetch_source, get_media_link
 from .makegif import gif_from_video, gifsicle_optimize, motion_caption, static_caption
 
 
-
 __outfn = "result"  # output file name
+
 
 def caption(caption_link: str, caption_text: str) -> str:
     check_dependency("ffmpeg")
 
-    
     logging.info("Initializing directories...")
 
     # project root
@@ -45,7 +44,6 @@ def caption(caption_link: str, caption_text: str) -> str:
     os.chdir(base_dir + tmp_rdir)
     logging.debug(f"Working directory: {os.getcwd()}")
 
-
     logging.info("Fetching media...")
 
     # check for supported sites
@@ -53,7 +51,6 @@ def caption(caption_link: str, caption_text: str) -> str:
 
     ext = determine_format(caption_link)
     source_path = fetch_source(caption_link, ext)
-
 
     # generate caption image
     caption_img = generate_caption_image(caption_text)
@@ -67,7 +64,7 @@ def caption(caption_link: str, caption_text: str) -> str:
 
     else:
         motion_caption(source_path, output_fname, caption_img)
-        
+
         if ext == "gif":
             output_gif_path = __outfn + ".gif"
             gif_from_video(output_fname, output_gif_path)
@@ -76,17 +73,14 @@ def caption(caption_link: str, caption_text: str) -> str:
             # optimize gif
             gifsicle_optimize(output_fname)
 
-    
     result_fname = caption_id + "." + ext
     os.replace(output_fname, base_dir + out_rdir + result_fname)
     logging.info(f"Moved result to {out_rdir + result_fname}")
-
 
     # TODO: cleanup on errors too
     logging.info("Cleaning up working directory...")
     clear_folder("./")
     os.chdir(base_dir)
     os.rmdir(tmp_rdir)
-
 
     return base_dir + out_rdir + result_fname

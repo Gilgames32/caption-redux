@@ -3,7 +3,7 @@ import requests
 import logging
 import ffmpeg
 
-__infn = "source"   # input file name
+__infn = "source"  # input file name
 
 
 def get_media_link(url: str) -> str:
@@ -27,16 +27,21 @@ def determine_format(link: str) -> str:
     if probe["format"]["format_name"] == "gif":
         logging.debug("Gif detected")
         return "gif"
-    
-    elif "nb_frames" not in probe["streams"][0] or probe["streams"][0]["nb_frames"] == '1':
-        logging.debug("No frame count or single frame attribute detected, output will be static")
+
+    elif (
+        "nb_frames" not in probe["streams"][0]
+        or probe["streams"][0]["nb_frames"] == "1"
+    ):
+        logging.debug(
+            "No frame count or single frame attribute detected, output will be static"
+        )
         logging.info("Static image detected")
         return "png"
 
     else:
         logging.debug("Video detected")
         return "mp4"
-    
+
 
 def fetch_source(link: str, ext: str) -> str:
     # TODO: disable local files on servers
@@ -51,4 +56,3 @@ def fetch_source(link: str, ext: str) -> str:
     else:
         logging.warning(f"Invalid source: {link}")
         raise ValueError("Invalid source link")
-
