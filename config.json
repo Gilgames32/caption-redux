@@ -1,0 +1,17 @@
+{
+    "safe_mode": false,
+    "text":
+    {
+        "font": "fonts/Futura_Condensed_Extra_Bold.otf",
+        "wrap_width": 22,
+        "line_spacing": 28,
+        "padding": [150, 150],
+        "minimum_line_width": 800
+    },
+    "color":
+    {
+        "background": "#FFFFFF",
+        "text": "#000000"
+    },
+    "emoji_style": "facebook"
+}
