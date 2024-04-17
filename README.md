@@ -1,5 +1,4 @@
-# Caption Redux
-(lite)
+# Caption Redux - WIP
 
 a gif captioner in the ifunny caption style, popular on discord and r/whenthe
 
@@ -22,32 +21,31 @@ have the following packages installed and added to the path
 
 ## usage
 \>open `caption-redux.py`
+
 \>???
+
 \>profit
 
 optionally you can run it with positional arguments
-`python3 caption-redux.py -i "<image link>" -t "<caption text>"`
+```bash
+python3 caption-redux.py -i "<image link>" -t "<caption text>"
+```
 - `<image link>` path or direct url to the image
 - `<caption text>` the caption, supports emojis, and discord emotes in `<:floraSmug:1112288234488201307>` format
  
 
 ## roadmap:
 - png optimization
-- video caption
 - video optimization
-- font, color, and emoji host configuration
 - gui
-- cache system
 - wider range of supported gif hosting sites
 - option to resize the gif to match the caption width and not the other way around
-- try to use memory instead of much priceous ssd (stupit)
 - show output file size
-- make it retain the original gif speed
-- emoji styles
 - force empty emoji cache
 - foce gif output
 - gif optimization options
 - fancy readme :3
+- fancier logging
 - idk, whatever comes to my mind really
 
 
