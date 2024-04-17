@@ -5,36 +5,25 @@ from PIL import Image, ImageFont, ImageDraw
 from .imgutil import get_width, get_height
 from .emojiutil import get_emoji_image
 from .textwraputil import weighted_textwrap
-
-
-# setup font
-max_width = 1000
-font_size = max_width * 0.10
-font_path = "Futura_Condensed_Extra_Bold.otf"
-font = ImageFont.truetype(font_path, font_size)
-# rough estimation
-font_max_width = get_width(font, "x") * 2
-font_avg_height = get_height(font, "pÓ")
-font_max_height = font_avg_height * 2
-
-
-# setup colors
-color_mode = "RGBA"
-text_color = "#000000"
-background_color = "#FFFFFF"
+from . import config
 
 
 # genereates the caption from the text
 def generate_caption_image(rawtext: str) -> Image.Image:
+    # setup font
+    font = ImageFont.truetype(config.font_path, config.font_size)
+    font_max_width = get_width(font, "x") * 2
+    font_avg_height = get_height(font, "pÓ")
+    font_max_height = font_avg_height * 2
+
     wrapped_lines, custom_emotes = weighted_textwrap(rawtext)
 
     logging.info("Rasterizing text...")
-    # generate line images
     line_images = []
     for line in wrapped_lines:
         # generate a large enough canvas
         line_image = Image.new(
-            color_mode, (font_max_width * len(line), font_max_height)
+            config.color_mode, (font_max_width * len(line), font_max_height)
         )
         line_draw = ImageDraw.Draw(line_image)
 
@@ -46,7 +35,7 @@ def generate_caption_image(rawtext: str) -> Image.Image:
                     character = custom_emotes.pop(0)
 
                 emoji_image = get_emoji_image(character)
-                emoji_image = emoji_image.resize((int(font_size),) * 2)
+                emoji_image = emoji_image.resize((int(config.font_size),) * 2)
 
                 line_image.paste(emoji_image, (x, font_avg_height // 2))
 
@@ -58,36 +47,44 @@ def generate_caption_image(rawtext: str) -> Image.Image:
                     xy=(x, font_avg_height // 2),
                     text=character,
                     font=font,
-                    fill=text_color,
+                    fill=config.text_color,
                 )
                 x += get_width(font, character)
 
+        # crop to the actual size
         line_image = line_image.crop(line_image.getbbox())
         logging.debug(f"Rasterized {line} to image, size: {line_image.size}")
 
         line_images.append(line_image)
 
-    # merge line images onto one image
-    merged_lines = Image.new(color_mode, (max_width, max_width * 5), (0,) * 4)
+    # the generous estimation of the maximum canvas size
+    max_width = max([img.width for img in line_images])
+    max_height = int((config.font_size + config.line_spacing) * len(line_images))
+
+    # merge line images into one
+    merged_lines = Image.new(config.color_mode, (max_width, max_height), (0,) * 4)
     logging.debug(f"Created merged canvas, size: {merged_lines.size}")
 
     y = 0
     for img in line_images:
-        # space between lines
-        y += font_size * 1.28
         merged_lines.paste(img, ((merged_lines.width - img.width) // 2, int(y)), img)
         logging.debug(f"Pasted line image at y = {int(y)}")
+        y += config.font_size + config.line_spacing
 
     merged_lines = merged_lines.crop(merged_lines.getbbox())
     logging.debug(f"Cropped merged canvas, size: {merged_lines.size}")
 
     # generate background
     caption = Image.new(
-        color_mode,
-        (max_width, int(merged_lines.height + font_avg_height * 1.50)),
-        background_color,
+        config.color_mode,
+        (
+            # add padding
+            max(merged_lines.width, config.minimum_line_width) + config.padding[0],
+            merged_lines.height + config.padding[1],
+        ),
+        config.bg_color,
     )
-    # paste in the middle
+    # paste merged lines in the middle
     caption.paste(
         merged_lines,
         (
