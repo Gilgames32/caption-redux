@@ -1,5 +1,6 @@
 {
     "safe_mode": false,
+    "loglevel": "info",
     "text":
     {
         "font": "fonts/Futura_Condensed_Extra_Bold.otf",
@@ -13,5 +14,16 @@
         "background": "#FFFFFF",
         "text": "#000000"
     },
-    "emoji_style": "facebook"
+    "emoji_style": "twitter",
+    "force_gif": false,
+    "preserve_gif_transparency": false,
+    "optimization": 
+    {
+        "gifsicle":
+        {
+            "enabled": true,
+            "compression": 200,
+            "colors": 256
+        }
+    }
 }
