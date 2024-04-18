@@ -6,7 +6,7 @@ import ffmpeg
 from PIL import Image
 from moviepy.editor import VideoFileClip, ColorClip, CompositeVideoClip, ImageClip
 
-from src.generatecaption import apply_caption, fit_caption_to_frame
+from .generatecaption import apply_caption, fit_caption_to_frame
 
 from .packages import check_dependency
 

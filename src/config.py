@@ -1,5 +1,5 @@
 import json
-
+import logging
 
 config: dict
 with open("config.json", "r") as f:
@@ -23,9 +23,22 @@ if emoji_style not in ["twitter", "apple", "google", "facebook"]:
     raise ValueError("Invalid emoji style")
 
 
-# TODO
-# logger level
-# optimization on off
-# optimization levels
-# force gif output
+# TODO: there must be a better way to do this
+__logdict = {
+    "info": logging.INFO,
+    "debug": logging.DEBUG,
+    "warning": logging.WARNING,
+    "error": logging.ERROR,
+}
+loglevel = __logdict[config["loglevel"]]
+
+gifsicle_enabled = config["optimization"]["gifsicle"]["enabled"]
+gifsicle_compression = config["optimization"]["gifsicle"]["compression"]
+gifsicle_colors = config["optimization"]["gifsicle"]["colors"]
+
+# TODO: implement
+force_gif = config["force_gif"]
+
+# TODO: implement
+aplha_gif = config["preserve_gif_transparency"]
 
