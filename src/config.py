@@ -12,7 +12,7 @@ with open(base_dir + "config.json", "r") as f:
 safe_mode = config["safe_mode"]
 
 font_size = 100
-font_path = config["text"]["font"]
+font_path = base_dir + config["text"]["font"]
 text_wrap_width = 40
 line_spacing = config["text"]["line_spacing"]
 padding = config["text"]["padding"]
