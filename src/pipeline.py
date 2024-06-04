@@ -7,8 +7,10 @@ from .generatecaption import generate_caption_image
 from .util import ensure_folder, clear_folder, generate_name
 from .media import determine_format, fetch_source, get_media_link
 from .makegif import gif_from_video, gifsicle_optimize, motion_caption, static_caption
+from . import config
+from .config import base_dir
 
-
+# TODO: move this to conf lol
 __outfn = "result"  # output file name
 
 
@@ -18,7 +20,6 @@ def caption(caption_link: str, caption_text: str) -> str:
     logging.info("Initializing directories...")
 
     # project root
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
     os.chdir(base_dir)
 
     # tmp
@@ -71,7 +72,12 @@ def caption(caption_link: str, caption_text: str) -> str:
             output_fname = output_gif_path
 
             # optimize gif
-            gifsicle_optimize(output_fname)
+            if config.gifsicle_enabled:
+                gifsicle_optimize(output_fname, config.gifsicle_compression, config.gifsicle_colors)
+
+    # TODO: not sure if 1000 or 1024 is the proper conversion here
+    # TODO: round
+    logging.info(f"Result is {os.path.getsize(output_fname) / 1024} KB")
 
     result_fname = caption_id + "." + ext
     os.replace(output_fname, base_dir + out_rdir + result_fname)

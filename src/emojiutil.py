@@ -6,12 +6,14 @@ import logging
 from PIL import Image
 from emoji import demojize, is_emoji
 
+from . import config
+
 emo_dir = "emojis/"
 
 
 def get_emoji_image(emoji_character: str) -> Image.Image:
     if is_emoji(emoji_character):
-        emoji_name = demojize(emoji_character, delimiters=("", ""))
+        emoji_name = config.emoji_style + "_" + demojize(emoji_character, delimiters=("", ""))
         logging.debug(f"Demojized {emoji_character} to {emoji_name}")
     else:
         emoji_name = re.search(":[\d]+>", emoji_character).group()[1:-1]
@@ -23,9 +25,9 @@ def get_emoji_image(emoji_character: str) -> Image.Image:
         logging.debug(f"Emoji {emoji_name} not found in cache, downloading...")
         if is_emoji(emoji_character):
             response = requests.get(
-                f"https://emojicdn.elk.sh/{emoji_character}?style=twitter", stream=True
+                f"https://emojicdn.elk.sh/{emoji_character}?style={config.emoji_style}", stream=True
             )
-            logging.debug(f"Downloaded {emoji_character} from emojicdn, style: twitter")
+            logging.debug(f"Downloaded {emoji_character} from emojicdn, style: {config.emoji_style}")
         else:
             # ignoring animated discord emotes
             response = requests.get(

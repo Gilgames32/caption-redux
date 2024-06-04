@@ -4,6 +4,8 @@ from textwrap import wrap
 from emoji import is_emoji, emojize
 from typing import List
 
+from . import config
+
 
 def add_emoji_weight(text: str) -> str:
     # how tf would one write regex for emojis lol
@@ -49,7 +51,7 @@ def weighted_textwrap(text: str):
 
     # lol
     wrapped_lines = sum(
-        [wrap(line, width=22) if line != "" else list(" ") for line in lines], []
+        [wrap(line, width=config.text_wrap_width) if line != "" else list(" ") for line in lines], []
     )
 
     # remove weight from text
