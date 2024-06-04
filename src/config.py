@@ -1,8 +1,12 @@
 import json
 import logging
+import os
+
+# project root
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
 
 config: dict
-with open("config.json", "r") as f:
+with open(base_dir + "config.json", "r") as f:
     config = json.load(f)
 
 safe_mode = config["safe_mode"]

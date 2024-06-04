@@ -8,7 +8,9 @@ from .util import ensure_folder, clear_folder, generate_name
 from .media import determine_format, fetch_source, get_media_link
 from .makegif import gif_from_video, gifsicle_optimize, motion_caption, static_caption
 from . import config
+from .config import base_dir
 
+# TODO: move this to conf lol
 __outfn = "result"  # output file name
 
 
@@ -18,7 +20,6 @@ def caption(caption_link: str, caption_text: str) -> str:
     logging.info("Initializing directories...")
 
     # project root
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
     os.chdir(base_dir)
 
     # tmp
