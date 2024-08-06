@@ -121,7 +121,7 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image, is_gif: bool =
 
     # compression is pointless for gifs
     if is_gif and config.gifsicle_enabled:
-        captioned_vid.write_gif(out_vid, fps=config.gif_fps if source_vid.fps > config.gif_fps else None)
+        captioned_vid.write_videofile(out_vid, fps=config.gif_fps if source_vid.fps > config.gif_fps else None)
     
     # compress video if enabled
     elif not is_gif and config.video_compress:
