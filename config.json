@@ -21,7 +21,16 @@
         {
             "enabled": true,
             "compression": 200,
-            "colors": 256
+            "colors": 256,
+            "fps": 30
+        },
+        "video":
+        {
+            "enabled": true,
+            "fps": 30,
+            "bitrate": "1000k",
+            "height": 480
         }
+
     }
 }
