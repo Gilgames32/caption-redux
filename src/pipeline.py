@@ -6,7 +6,7 @@ from .packages import check_dependency
 from .generatecaption import generate_caption_image
 from .util import ensure_folder, clear_folder, generate_name
 from .media import determine_format, fetch_source, get_media_link
-from .makegif import gif_from_video, gifsicle_optimize, motion_caption, static_caption
+from .makegif import convert_to_gif, gifsicle_optimize, motion_caption, static_caption, legacy_caption
 from . import config
 from .config import base_dir
 
@@ -14,7 +14,7 @@ from .config import base_dir
 __outfn = "result"  # output file name
 
 
-def caption(caption_link: str, caption_text: str) -> str:
+def caption(caption_link: str, caption_text: str, force_gif=False, gif_alpha=False) -> str:
     check_dependency("ffmpeg")
 
     logging.info("Initializing directories...")
@@ -51,29 +51,35 @@ def caption(caption_link: str, caption_text: str) -> str:
     caption_link = get_media_link(caption_link)
 
     ext = determine_format(caption_link)
-    source_path = fetch_source(caption_link, ext)
+    source_path = fetch_source(caption_link, ext, gif_alpha and ext == "gif")
 
     # generate caption image
     caption_img = generate_caption_image(caption_text)
 
     # apply caption
-    output_fname = __outfn + "." + (ext if ext != "gif" else "mp4")
     logging.info("Applying caption...")
-    if ext == "png":
+    output_fname = __outfn + "." + ext
+
+    if ext == "gif" and gif_alpha:
+        legacy_caption(source_path, output_fname, caption_img)
+    elif ext == "png":
         static_caption(source_path, output_fname, caption_img)
-        # TODO: png optimization
-
+        if force_gif:
+            logging.info("Converting png to gif...")
+            convert_to_gif(output_fname, __outfn + ".gif")
+            output_fname = __outfn + ".gif"
+            ext = "gif"
     else:
-        motion_caption(source_path, output_fname, caption_img)
+        temp_outname = __outfn + ".mp4"
+        motion_caption(source_path, temp_outname, caption_img)
 
-        if ext == "gif":
-            output_gif_path = __outfn + ".gif"
-            gif_from_video(output_fname, output_gif_path)
-            output_fname = output_gif_path
+        if ext == "gif" or force_gif:
+            convert_to_gif(temp_outname, output_fname)
 
-            # optimize gif
-            if config.gifsicle_enabled:
-                gifsicle_optimize(output_fname, config.gifsicle_compression, config.gifsicle_colors)
+    # optimize
+    # TODO: png optimization
+    if ext == "gif" and config.gifsicle_enabled:
+        gifsicle_optimize(output_fname, config.gifsicle_compression, config.gifsicle_colors)
 
     # TODO: not sure if 1000 or 1024 is the proper conversion here
     # TODO: round
