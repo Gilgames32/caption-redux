@@ -11,7 +11,7 @@ logging.basicConfig(level=config.loglevel)
 args.correctparse()
 
 try:
-    outpath = caption(args.imgpath, args.captiontext)
+    outpath = caption(args.imgpath, args.captiontext, args.force_gif, args.gif_alpha)
     print(f"\nFinished caption at {outpath}")
 except Exception as e:
     print(e)

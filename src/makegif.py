@@ -10,12 +10,28 @@ from .generatecaption import apply_caption, fit_caption_to_frame
 
 from .packages import check_dependency
 
-__palfne = "palette.png"  # palette file name and extension
-__capfne = "caption.png"  # caption file name and extension
+__palfne = "palette.png"    # palette file name and extension
+__capfne = "caption.png"    # caption file name and extension
+
+# makes a gif from frames using ffmpeg
+def gif_from_frames(in_frames: str, out_gif: str):
+    logging.info("Generating gif palette...")
+    st = time.time()
+    ffmpeg.input(in_frames).filter("palettegen", reserve_transparent=1).output(__palfne).run(quiet=True)
+    logging.debug(f"Generated palette")
+
+    logging.info("Generating gif...")
+    ffmpeg.filter(
+        [ffmpeg.input(in_frames), ffmpeg.input(__palfne)],
+        "paletteuse",
+        alpha_threshold=128,
+    ).output(out_gif).run(quiet=True)
+    et = time.time()
+    logging.info(f"Converted frames to gif in {et - st} seconds")
 
 
 # makes a gif from video using ffmpeg
-def gif_from_video(in_vid: str, out_gif: str):
+def convert_to_gif(in_vid: str, out_gif: str):
     logging.info("Converting video to gif...")
 
     st = time.time()
@@ -101,7 +117,36 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image):
     # Export the final video
     captioned_vid = captioned_vid.set_duration(source_vid.duration)
     logging.info("Writing video...")
-    captioned_vid.write_videofile(out_vid, logger=None)
+    # TODO: add option to resize and set bitrate
+    captioned_vid.write_videofile(out_vid, logger=None, threads=4, bitrate="1000k")
 
     et = time.time()
     logging.info(f"Finished writing video in {et - st} seconds")
+
+
+# the old frame-by-frame captioning method
+def legacy_caption(in_frames, out_gif: str, caption_img: Image):
+    # sorted list of frames
+    frames = sorted(
+        [file for file in next(os.walk("."))[2] if file.endswith("png")], key=str
+    )
+
+    # fit caption to frame
+    first_frame = Image.open(frames[0])
+    caption_img = fit_caption_to_frame(first_frame.width, caption_img)
+    first_frame.close()
+
+    # apply to each frame
+    logging.info(f"Applying caption to {len(frames)} frames...")
+    st = time.time()
+    for frame in frames:
+        frame_img = Image.open(frame)
+        captioned = apply_caption(frame_img, caption_img)
+        captioned.save(frame)
+        frame_img.close()
+
+    et = time.time()
+    logging.info(f"Applied caption to {len(frames)} frames in {et - st} seconds")
+
+    # convert to gif
+    gif_from_frames(in_frames, out_gif)

@@ -39,10 +39,3 @@ loglevel = __logdict[config["loglevel"]]
 gifsicle_enabled = config["optimization"]["gifsicle"]["enabled"]
 gifsicle_compression = config["optimization"]["gifsicle"]["compression"]
 gifsicle_colors = config["optimization"]["gifsicle"]["colors"]
-
-# TODO: implement
-force_gif = config["force_gif"]
-
-# TODO: implement
-aplha_gif = config["preserve_gif_transparency"]
-

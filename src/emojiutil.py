@@ -16,7 +16,7 @@ def get_emoji_image(emoji_character: str) -> Image.Image:
         emoji_name = config.emoji_style + "_" + demojize(emoji_character, delimiters=("", ""))
         logging.debug(f"Demojized {emoji_character} to {emoji_name}")
     else:
-        emoji_name = re.search(":[\d]+>", emoji_character).group()[1:-1]
+        emoji_name = re.search(r":[\d]+>", emoji_character).group()[1:-1]
         logging.debug(f"Extracted {emoji_name} from discord emote {emoji_character}")
 
     emoji_path = emo_dir + emoji_name + ".png"
