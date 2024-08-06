@@ -25,7 +25,11 @@ def get_media_link(url: str) -> str:
 
 
 def determine_format(link: str) -> str:
-    probe = ffmpeg.probe(link)
+    try:
+        probe = ffmpeg.probe(link)
+    except ffmpeg.Error as e:
+        logging.error(f"FFmpeg error: {e.stderr}")
+        raise ValueError("FFmpeg error")
 
     if probe["format"]["format_name"] == "gif":
         logging.debug("Gif detected")

@@ -13,7 +13,7 @@ safe_mode = config["safe_mode"]
 
 font_size = 100
 font_path = base_dir + config["text"]["font"]
-text_wrap_width = 40
+text_wrap_width = config["text"]["wrap_width"]
 line_spacing = config["text"]["line_spacing"]
 padding = config["text"]["padding"]
 minimum_line_width = config["text"]["minimum_line_width"]
