@@ -27,7 +27,6 @@ if emoji_style not in ["twitter", "apple", "google", "facebook"]:
     raise ValueError("Invalid emoji style")
 
 
-# TODO: there must be a better way to do this
 __logdict = {
     "info": logging.INFO,
     "debug": logging.DEBUG,
@@ -39,3 +38,9 @@ loglevel = __logdict[config["loglevel"]]
 gifsicle_enabled = config["optimization"]["gifsicle"]["enabled"]
 gifsicle_compression = config["optimization"]["gifsicle"]["compression"]
 gifsicle_colors = config["optimization"]["gifsicle"]["colors"]
+gif_fps = config["optimization"]["gifsicle"]["fps"]
+
+video_compress = config["optimization"]["video"]["enabled"]
+video_bitrate = config["optimization"]["video"]["bitrate"]
+video_fps = config["optimization"]["video"]["fps"]
+video_height = config["optimization"]["video"]["height"]

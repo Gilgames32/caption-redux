@@ -7,6 +7,7 @@ from PIL import Image
 from moviepy.editor import VideoFileClip, ColorClip, CompositeVideoClip, ImageClip
 
 from .generatecaption import apply_caption, fit_caption_to_frame
+from . import config
 
 from .packages import check_dependency
 
@@ -87,7 +88,7 @@ def static_caption(in_img: str, out_img: str, caption_img: Image):
         captioned_img.save(out_img)
 
 
-def motion_caption(in_vid: str, out_vid: str, caption_img: Image):
+def motion_caption(in_vid: str, out_vid: str, caption_img: Image, is_gif: bool = False):
     logging.debug("Preparing video...")
     st = time.time()
 
@@ -117,8 +118,21 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image):
     # Export the final video
     captioned_vid = captioned_vid.set_duration(source_vid.duration)
     logging.info("Writing video...")
-    # TODO: add option to resize and set bitrate
-    captioned_vid.write_videofile(out_vid, logger=None, threads=4, bitrate="1000k")
+
+    # compression is pointless for gifs
+    if is_gif and config.gifsicle_enabled:
+        captioned_vid.write_gif(out_vid, fps=config.gif_fps if source_vid.fps > config.gif_fps else None)
+    
+    # compress video if enabled
+    elif not is_gif and config.video_compress:
+        if source_vid.h > config.video_height:
+            captioned_vid.resize(height=config.video_height)
+        captioned_vid.write_videofile(out_vid, logger=None, threads=4, 
+                                      bitrate=config.video_bitrate,
+                                      fps=config.video_fps if source_vid.fps > config.video_fps else None)
+    else:
+        captioned_vid.write_videofile(out_vid, logger=None, threads=4)
+    
 
     et = time.time()
     logging.info(f"Finished writing video in {et - st} seconds")

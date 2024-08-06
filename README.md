@@ -32,6 +32,9 @@ python3 caption-redux.py -i "<image link>" -t "<caption text>"
 ```
 - `<image link>` path or direct url to the image
 - `<caption text>` the caption, supports emojis, and discord emotes in `<:floraSmug:1112288234488201307>` format
+- additional flags:
+    - `-a`: preserve gif transparency (uses legacy method, a bit slower) 
+    - `-g`: force gif output (even if the input was an mp4 of png)
  
 
 ## roadmap:

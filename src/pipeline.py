@@ -71,7 +71,7 @@ def caption(caption_link: str, caption_text: str, force_gif=False, gif_alpha=Fal
             ext = "gif"
     else:
         temp_outname = __outfn + ".mp4"
-        motion_caption(source_path, temp_outname, caption_img)
+        motion_caption(source_path, temp_outname, caption_img, ext == "gif")
 
         if ext == "gif" or force_gif:
             convert_to_gif(temp_outname, output_fname)
@@ -81,9 +81,7 @@ def caption(caption_link: str, caption_text: str, force_gif=False, gif_alpha=Fal
     if ext == "gif" and config.gifsicle_enabled:
         gifsicle_optimize(output_fname, config.gifsicle_compression, config.gifsicle_colors)
 
-    # TODO: not sure if 1000 or 1024 is the proper conversion here
-    # TODO: round
-    logging.info(f"Result is {os.path.getsize(output_fname) / 1024} KB")
+    logging.info(f"Result is {round(os.path.getsize(output_fname) / 1024), 2} KB")
 
     result_fname = caption_id + "." + ext
     os.replace(output_fname, base_dir + out_rdir + result_fname)

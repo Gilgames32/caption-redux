@@ -3,6 +3,8 @@ import requests
 import logging
 import ffmpeg
 
+from . import config
+
 __infn = "source"  # input file name
 __framenaming = "frame_%05d.png"
 
@@ -45,24 +47,32 @@ def determine_format(link: str) -> str:
 
 
 def fetch_source(link: str, ext: str, frames: bool) -> str:
-    # TODO: disable local files on servers
     if os.path.exists(link):
         logging.debug(f"Local file detected at {link}")
+        
+        if config.safe_mode:
+            logging.warning("Unable to access local files in safe mode")
+            raise ValueError("Local files are disabled in safe mode")
+        
         if frames:
             logging.info("Converting local file to frames...")
             ffmpeg.input(link).output(__framenaming).overwrite_output().run(quiet=True)
             return __framenaming
+        
         return link
+    
     elif link.startswith("https://"):
         if frames:
             logging.info("Fetching frames...")
             ffmpeg.input(link).output(__framenaming).overwrite_output().run(quiet=True)
             return __framenaming
+        
         else:
             dl = __infn + "." + (ext if ext != "gif" else "mp4")
             logging.info("Downloading media...")
             ffmpeg.input(link).output(dl).run(quiet=True)
             return dl
+    
     else:
         logging.warning(f"Invalid source: {link}")
         raise ValueError("Invalid source link")
