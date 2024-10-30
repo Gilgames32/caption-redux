@@ -34,6 +34,7 @@ __logdict = {
     "error": logging.ERROR,
 }
 loglevel = __logdict[config["loglevel"]]
+show_test_result_images = config["show_test_result_images"]
 
 pngcrush_enabled = config["optimization"]["pngcrush"]["enabled"]
 
