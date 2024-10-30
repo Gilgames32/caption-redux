@@ -6,7 +6,7 @@ from .packages import check_dependency
 from .generatecaption import generate_caption_image
 from .util import ensure_folder, clear_folder, generate_name
 from .media import determine_format, fetch_source, get_media_link
-from .makegif import convert_to_gif, gifsicle_optimize, motion_caption, static_caption, legacy_caption
+from .makegif import convert_to_gif, gifsicle_optimize, motion_caption, static_caption, legacy_caption, pngcrush_optimize
 from . import config
 from .config import base_dir
 
@@ -77,11 +77,12 @@ def caption(caption_link: str, caption_text: str, force_gif=False, gif_alpha=Fal
             convert_to_gif(temp_outname, output_fname)
 
     # optimize
-    # TODO: png optimization
+    if ext == "png" and config.pngcrush_enabled:
+        pngcrush_optimize(output_fname)
     if ext == "gif" and config.gifsicle_enabled:
         gifsicle_optimize(output_fname, config.gifsicle_compression, config.gifsicle_colors)
 
-    logging.info(f"Result is {round(os.path.getsize(output_fname) / 1024), 2} KB")
+    logging.info(f"Result is {round(os.path.getsize(output_fname) / 1024, 2)} KB")
 
     result_fname = caption_id + "." + ext
     os.replace(output_fname, base_dir + out_rdir + result_fname)

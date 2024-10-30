@@ -164,3 +164,19 @@ def legacy_caption(in_frames, out_gif: str, caption_img: Image):
 
     # convert to gif
     gif_from_frames(in_frames, out_gif)
+
+def pngcrush_optimize(filepath: str):
+    check_dependency("pngcrush")
+    logging.info("Optimizing png with pngcrush...")
+    orig_size = os.stat(filepath).st_size
+    st = time.time()
+    sp = subprocess.run(
+        ["pngcrush", "-ow", filepath], capture_output=True, check=True, text=True
+    )
+    et = time.time()
+    opti_size = os.stat(filepath).st_size
+
+    logging.debug(sp.stdout)
+    logging.info(
+        f"Optimized png in {et - st} seconds, files size reduced by { (orig_size - opti_size) / orig_size * 100 }%"
+    )
