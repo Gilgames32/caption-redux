@@ -17,6 +17,10 @@
     "emoji_style": "twitter",
     "optimization": 
     {
+        "pngcrush":
+        {
+            "enabled": false
+        },
         "gifsicle":
         {
             "enabled": true,
@@ -31,6 +35,5 @@
             "bitrate": "1000k",
             "height": 480
         }
-
     }
 }

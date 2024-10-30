@@ -35,6 +35,8 @@ __logdict = {
 }
 loglevel = __logdict[config["loglevel"]]
 
+pngcrush_enabled = config["optimization"]["pngcrush"]["enabled"]
+
 gifsicle_enabled = config["optimization"]["gifsicle"]["enabled"]
 gifsicle_compression = config["optimization"]["gifsicle"]["compression"]
 gifsicle_colors = config["optimization"]["gifsicle"]["colors"]

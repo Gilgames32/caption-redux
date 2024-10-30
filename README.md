@@ -17,9 +17,14 @@ pip install -r requirements. txt
 ```
 have the following packages installed and added to the path
 - [ffmpeg](https://ffmpeg.org/download.html)
-- [gifsicle](https://www.lcdf.org/gifsicle/)
+- [gifsicle](https://www.lcdf.org/gifsicle/) (optional but gif optimizations wont work)
+- [pngcrush](https://pmt.sourceforge.io/pngcrush/) (optional but png optimizations wont work)
 
 ## usage
+
+> [!WARNING]
+> incomplete and soon to be deprecated
+
 \>open `caption-redux.py`
 
 \>???
@@ -38,19 +43,14 @@ python3 caption-redux.py -i "<image link>" -t "<caption text>"
  
 
 ## roadmap:
-- png optimization
-- video optimization
-- gui
+- ~~gui~~ bro just use the terminal
 - wider range of supported gif hosting sites
 - option to resize the gif to match the caption width and not the other way around
-- show output file size
-- force empty emoji cache
-- foce gif output
-- gif optimization options
+- force empty emoji cache, force empty temp folder
 - fancy readme :3
-- fancier logging
+    - more verbose too
 - idk, whatever comes to my mind really
-
+- a more OO approach, a refactor if i feel like it 
 
 ## contribution
 the project is still in developement and open to contributions
