@@ -1,6 +1,7 @@
 {
     "safe_mode": false,
     "loglevel": "info",
+    "show_test_result_images": true,
     "text":
     {
         "font": "fonts/Futura_Condensed_Extra_Bold.otf",

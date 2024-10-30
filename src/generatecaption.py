@@ -85,13 +85,12 @@ def generate_caption_image(rawtext: str) -> Image.Image:
         config.bg_color,
     )
     # paste merged lines in the middle
-    caption.paste(
+    caption.alpha_composite(
         merged_lines,
         (
             (caption.width - merged_lines.width) // 2,
             (caption.height - merged_lines.height) // 2,
-        ),
-        merged_lines,
+        )
     )
     logging.debug(f"Added padding to caption, size: {caption.size}")
 
