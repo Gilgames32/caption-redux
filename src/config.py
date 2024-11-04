@@ -3,46 +3,58 @@ import logging
 import os
 
 # project root
-base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
+# FIXME
+# base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
 
-config: dict
-with open(base_dir + "config.json", "r") as f:
-    config = json.load(f)
+class Config:
+    # dont tamper
+    color_mode = "RGBA"
 
-safe_mode = config["safe_mode"]
+    emoji_dir = "emojis/"
+    tmp_dir = "tmp/"
+    out_dir = "out/"
 
-font_size = 100
-font_path = base_dir + config["text"]["font"]
-text_wrap_width = config["text"]["wrap_width"]
-line_spacing = config["text"]["line_spacing"]
-padding = config["text"]["padding"]
-minimum_line_width = config["text"]["minimum_line_width"]
+    def __init__(self, args, config_path = "config.json"):
+        with open(config_path, "r") as f:
+            config = json.load(f)
 
-color_mode = "RGBA"
-bg_color = config["color"]["background"]
-text_color = config["color"]["text"]
+        # from args
+        self.image_path = args.image
+        self.caption_text = args.text
+        self.force_gif = args.gif
+        self.gif_alpha = args.alpha
 
-emoji_style = config["emoji_style"]
-if emoji_style not in ["twitter", "apple", "google", "facebook"]:
-    raise ValueError("Invalid emoji style")
+        # from config
+        self.safe_mode = config.get("safe_mode", True)
+        self.loglevel = config.get("loglevel", "info").upper()
 
+        self.font_path = config.get("text", {}).get("font", "") # TODO: defailt
+        self.font_size = config.get("text", {}).get("font_size", 100)
+        self.text_wrap_width = config.get("text", {}).get("wrap_width", 22)
+        self.line_spacing = config.get("text", {}).get("line_spacing", 28)
+        self.text_padding = config.get("text", {}).get("padding", [150, 150])
+        self.minimum_line_width = config.get("text", {}).get("minimum_line_width", 800)
+        
+        self.bg_color = config.get("color", {}).get("background", "#FFFFFF")
+        self.text_color = config.get("color", {}).get("text", "#000000")
 
-__logdict = {
-    "info": logging.INFO,
-    "debug": logging.DEBUG,
-    "warning": logging.WARNING,
-    "error": logging.ERROR,
-}
-loglevel = __logdict[config["loglevel"]]
+        self.emoji_style = config.get("emoji_style", "twitter")
 
-pngcrush_enabled = config["optimization"]["pngcrush"]["enabled"]
+        self.pngcrush_enabled = config.get("optimization", {}).get("pngcrush", {}).get("enabled", False)
+        self.gifsicle_enabled = config.get("optimization", {}).get("gifsicle", {}).get("enabled", False)
+        self.gifsicle_compression = config.get("optimization", {}).get("gifsicle", {}).get("compression", 200)
+        self.gifsicle_colors = config.get("optimization", {}).get("gifsicle", {}).get("colors", 256)
+        self.gif_fps = config.get("optimization", {}).get("gifsicle", {}).get("fps", 30)
+        self.video_compression = config.get("optimization", {}).get("video", {}).get("enabled", False)
+        self.video_fps = config.get("optimization", {}).get("video", {}).get("fps", 30)
+        self.video_bitrate = config.get("optimization", {}).get("video", {}).get("bitrate", "1000k")
+        self.video_height = config.get("optimization", {}).get("video", {}).get("height", 480)
 
-gifsicle_enabled = config["optimization"]["gifsicle"]["enabled"]
-gifsicle_compression = config["optimization"]["gifsicle"]["compression"]
-gifsicle_colors = config["optimization"]["gifsicle"]["colors"]
-gif_fps = config["optimization"]["gifsicle"]["fps"]
+        self.validate()
 
-video_compress = config["optimization"]["video"]["enabled"]
-video_bitrate = config["optimization"]["video"]["bitrate"]
-video_fps = config["optimization"]["video"]["fps"]
-video_height = config["optimization"]["video"]["height"]
+    def validate(self):
+        if self.emoji_style not in ["twitter", "apple", "google", "facebook"]:
+            raise ValueError("Invalid emoji style")
+        if self.loglevel not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
+            raise ValueError("Invalid loglevel")
+        # TODO: validate bitrate?

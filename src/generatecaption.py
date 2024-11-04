@@ -5,18 +5,18 @@ from PIL import Image, ImageFont, ImageDraw
 from .imgutil import get_width, get_height
 from .emojiutil import get_emoji_image
 from .textwraputil import weighted_textwrap
-from . import config
+from .config import Config
 
 
 # genereates the caption from the text
-def generate_caption_image(rawtext: str) -> Image.Image:
+def generate_caption_image(config: Config) -> Image.Image:
     # setup font
     font = ImageFont.truetype(config.font_path, config.font_size)
     font_max_width = get_width(font, "x") * 2
     font_avg_height = get_height(font, "pÓ")
     font_max_height = font_avg_height * 2
 
-    wrapped_lines, custom_emotes = weighted_textwrap(rawtext)
+    wrapped_lines, custom_emotes = weighted_textwrap(config.caption_text, config.text_wrap_width)
 
     logging.info("Rasterizing text...")
     line_images = []
@@ -79,8 +79,8 @@ def generate_caption_image(rawtext: str) -> Image.Image:
         config.color_mode,
         (
             # add padding
-            max(merged_lines.width, config.minimum_line_width) + config.padding[0],
-            merged_lines.height + config.padding[1],
+            max(merged_lines.width, config.minimum_line_width) + config.text_padding[0],
+            merged_lines.height + config.text_padding[1],
         ),
         config.bg_color,
     )

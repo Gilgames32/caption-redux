@@ -5,93 +5,104 @@ from . import emojiutil
 from .packages import check_dependency
 from .generatecaption import generate_caption_image
 from .util import ensure_folder, clear_folder, generate_name
-from .media import determine_format, fetch_source, get_media_link
+from .media import determine_format, fetch_source, check_media_site
 from .makegif import convert_to_gif, gifsicle_optimize, motion_caption, static_caption, legacy_caption, pngcrush_optimize
-from . import config
-from .config import base_dir
-
-# TODO: move this to conf lol
-__outfn = "result"  # output file name
+from .config import Config
 
 
-def caption(caption_link: str, caption_text: str, force_gif=False, gif_alpha=False) -> str:
+__tmp_result_name = "result"  # temporary output file name
+
+
+def caption(config: Config) -> str:
+    setup_environment()
+    unique_id, unique_dir = make_unique_dir(config.caption_text)
+
+    config.image_path = check_media_site(config.image_path)
+
+    try:
+        source_ext = determine_format(config.image_path)
+        legacy_gif_method = source_ext == "gif" and config.gif_alpha
+        source_path = fetch_source(config.image_path, source_ext, unique_dir, legacy_gif_method)
+
+        caption_img = generate_caption_image(config)
+
+        output_fname = apply_caption(config, source_path, caption_img, source_ext, unique_dir, legacy_gif_method)
+        optimize(config, output_fname)
+
+        result_path = move_result(output_fname, unique_id)
+
+    except Exception as e:
+        raise e  # TODO
+    finally:
+        logging.info("Cleaning up working directory...")
+        clear_folder(unique_dir)
+        os.rmdir(unique_dir)
+
+    return result_path
+
+
+def setup_environment():
+    logging.debug("Setting up working directories")
+
     check_dependency("ffmpeg")
+    ensure_folder(Config.tmp_dir)
+    ensure_folder(Config.emoji_dir)
+    ensure_folder(Config.out_dir)
 
-    logging.info("Initializing directories...")
 
-    # project root
-    os.chdir(base_dir)
+def make_unique_dir(text: str) -> tuple[str, str]:
+    logging.debug("Generating unique working directory")
 
-    # tmp
-    tmp_rdir = "tmp/"
-    ensure_folder(tmp_rdir)
+    while os.path.exists(unique_dir := (Config.tmp_dir + (unique_id := generate_name(text)))):
+        pass
 
-    # output
-    out_rdir = "out/"
-    ensure_folder(out_rdir)
+    ensure_folder(unique_dir)
 
-    # emoji cache
-    emojiutil.emo_dir = base_dir + "emojis/"
-    ensure_folder(emojiutil.emo_dir)
+    logging.debug(f"Unique directory: {unique_dir}")
+    return unique_id, unique_dir
 
-    # generate unique cwd
-    caption_id = generate_name(caption_text)
-    while os.path.exists(tmp_rdir + caption_id):
-        caption_id = generate_name(caption_text)
-    tmp_rdir += caption_id
-    ensure_folder(tmp_rdir)
 
-    # change cwd
-    os.chdir(base_dir + tmp_rdir)
-    logging.debug(f"Working directory: {os.getcwd()}")
-
-    logging.info("Fetching media...")
-
-    # check for supported sites
-    caption_link = get_media_link(caption_link)
-
-    ext = determine_format(caption_link)
-    source_path = fetch_source(caption_link, ext, gif_alpha and ext == "gif")
-
-    # generate caption image
-    caption_img = generate_caption_image(caption_text)
-
-    # apply caption
+def apply_caption(config: Config, source_path: str, caption_img: str, ext: str, dist: str, legacy_gif_method: bool = False):
     logging.info("Applying caption...")
-    output_fname = __outfn + "." + ext
 
-    if ext == "gif" and gif_alpha:
-        legacy_caption(source_path, output_fname, caption_img)
+    output_path = os.path.join(dist, __tmp_result_name + "." + ext)
+
+    if legacy_gif_method:
+        legacy_caption(source_path, output_path, caption_img)
     elif ext == "png":
-        static_caption(source_path, output_fname, caption_img)
-        if force_gif:
+        static_caption(source_path, output_path, caption_img)
+        if config.force_gif:
             logging.info("Converting png to gif...")
-            convert_to_gif(output_fname, __outfn + ".gif")
-            output_fname = __outfn + ".gif"
+            new_output_path = os.path.join(dist, __tmp_result_name + ".gif")
+            convert_to_gif(output_path, new_output_path)
+            output_path = new_output_path
             ext = "gif"
     else:
-        temp_outname = __outfn + ".mp4"
-        motion_caption(source_path, temp_outname, caption_img, ext == "gif")
+        temp_output_path = os.path.join(dist, __tmp_result_name + ".mp4")
+        motion_caption(source_path, temp_output_path, caption_img, ext == "gif")
 
-        if ext == "gif" or force_gif:
-            convert_to_gif(temp_outname, output_fname)
+        if ext == "gif" or config.force_gif:
+            convert_to_gif(temp_output_path, output_path)
 
-    # optimize
+    return output_path
+
+def optimize(config: Config, filepath: str):
+    ext = filepath.split(".")[-1]
     if ext == "png" and config.pngcrush_enabled:
-        pngcrush_optimize(output_fname)
-    if ext == "gif" and config.gifsicle_enabled:
-        gifsicle_optimize(output_fname, config.gifsicle_compression, config.gifsicle_colors)
+        pngcrush_optimize(filepath)
+    elif ext == "gif" and config.gifsicle_enabled:
+        gifsicle_optimize(filepath, config.gifsicle_compression, config.gifsicle_colors)
 
-    logging.info(f"Result is {round(os.path.getsize(output_fname) / 1024, 2)} KB")
+    logging.info(f"Result is {round(os.path.getsize(filepath) / 1024, 2)} KB")
 
-    result_fname = caption_id + "." + ext
-    os.replace(output_fname, base_dir + out_rdir + result_fname)
-    logging.info(f"Moved result to {out_rdir + result_fname}")
 
-    # TODO: cleanup on errors too
-    logging.info("Cleaning up working directory...")
-    clear_folder("./")
-    os.chdir(base_dir)
-    os.rmdir(tmp_rdir)
+def move_result(output_fname: str, unique_id: str):
+    output_ext = output_fname.split(".")[-1]
+    result_fname = unique_id + "." + output_ext
 
-    return base_dir + out_rdir + result_fname
+    result_path = os.path.join(Config.out_dir, result_fname)
+    os.replace(output_fname, result_path)
+
+    logging.info(f"Moved result to {result_path}")
+
+    return result_path

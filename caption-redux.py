@@ -1,17 +1,19 @@
 from src.pipeline import caption
 from src import args
-from src import config
+from src.config import Config
 import logging
 
-if __name__ != "__main__":
-    quit()
+def main():
+    arguments = args.parse_args()
+    config = Config(arguments)
+    logging.basicConfig(level=getattr(logging, config.loglevel))
 
-logging.basicConfig(level=config.loglevel)
+    try:
+        outpath = caption(config)
+        print(f"\nFinished caption at {outpath}")
+    except Exception as e:
+        print(f"\nFailed to create caption")
+        print(e)
 
-args.correctparse()
-
-try:
-    outpath = caption(args.imgpath, args.captiontext, args.force_gif, args.gif_alpha)
-    print(f"\nFinished caption at {outpath}")
-except Exception as e:
-    print(e)
+if __name__ == "__main__":
+    main()

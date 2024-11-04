@@ -5,11 +5,11 @@ import ffmpeg
 
 from . import config
 
-__infn = "source"  # input file name
-__framenaming = "frame_%05d.png"
+__temp_source_filename = "source"   # temporary file name for the source
+__framenaming = "frame_%05d.png"    # frame name template for ffmpeg
 
 
-def get_media_link(url: str) -> str:
+def check_media_site(url: str) -> str:
     if "https://" in url:
         if "tenor.com/view" in url:
             logging.info("Found media link in supported image hosting site")
@@ -19,8 +19,9 @@ def get_media_link(url: str) -> str:
                 .replace("\\u002F", "/")
                 .split('"')[2]
             )
-        # more to come
+        # TODO: add more
 
+    logging.debug(f"Corrected url to {url}")
     return url
 
 
@@ -50,7 +51,7 @@ def determine_format(link: str) -> str:
         return "mp4"
 
 
-def fetch_source(link: str, ext: str, frames: bool) -> str:
+def fetch_source(link: str, ext: str, dist: str, frames: bool) -> str:
     if os.path.exists(link):
         logging.debug(f"Local file detected at {link}")
         
@@ -60,22 +61,26 @@ def fetch_source(link: str, ext: str, frames: bool) -> str:
         
         if frames:
             logging.info("Converting local file to frames...")
-            ffmpeg.input(link).output(__framenaming).overwrite_output().run(quiet=True)
-            return __framenaming
+            # TODO: test
+            frames_path = os.path.join(dist, __framenaming)
+            ffmpeg.input(link).output(frames_path).overwrite_output().run(quiet=True)
+            return frames_path
         
         return link
     
     elif link.startswith("https://"):
         if frames:
             logging.info("Fetching frames...")
-            ffmpeg.input(link).output(__framenaming).overwrite_output().run(quiet=True)
-            return __framenaming
+            frames_path = os.path.join(dist, __framenaming)
+            ffmpeg.input(link).output(frames_path).overwrite_output().run(quiet=True)
+            return frames_path
         
         else:
-            dl = __infn + "." + (ext if ext != "gif" else "mp4")
+            download_filename = __temp_source_filename + "." + (ext if ext != "gif" else "mp4")
+            download_path = os.path.join(dist, download_filename)
             logging.info("Downloading media...")
-            ffmpeg.input(link).output(dl).run(quiet=True)
-            return dl
+            ffmpeg.input(link).output(download_path).run(quiet=True)
+            return download_path
     
     else:
         logging.warning(f"Invalid source: {link}")
