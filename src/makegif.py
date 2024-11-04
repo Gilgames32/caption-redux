@@ -7,23 +7,24 @@ from PIL import Image
 from moviepy.editor import VideoFileClip, ColorClip, CompositeVideoClip, ImageClip
 
 from .generatecaption import apply_caption, fit_caption_to_frame
-from . import config
+from .config import Config
 
 from .packages import check_dependency
 
-__palfne = "palette.png"    # palette file name and extension
-__capfne = "caption.png"    # caption file name and extension
+__palette_filename = "palette.png"  # palette file name and extension
+__caption_filename = "caption.png"  # caption file name and extension
 
 # makes a gif from frames using ffmpeg
-def gif_from_frames(in_frames: str, out_gif: str):
+def gif_from_frames(in_frames: str, out_gif: str, work_dir: str):
     logging.info("Generating gif palette...")
     st = time.time()
-    ffmpeg.input(in_frames).filter("palettegen", reserve_transparent=1).output(__palfne).run(quiet=True)
+    palette_path = os.path.join(work_dir, __palette_filename)
+    ffmpeg.input(in_frames).filter("palettegen", reserve_transparent=1).output(palette_path).run(quiet=True)
     logging.debug(f"Generated palette")
 
     logging.info("Generating gif...")
     ffmpeg.filter(
-        [ffmpeg.input(in_frames), ffmpeg.input(__palfne)],
+        [ffmpeg.input(in_frames), ffmpeg.input(palette_path)],
         "paletteuse",
         alpha_threshold=128,
     ).output(out_gif).run(quiet=True)
@@ -32,17 +33,19 @@ def gif_from_frames(in_frames: str, out_gif: str):
 
 
 # makes a gif from video using ffmpeg
-def convert_to_gif(in_vid: str, out_gif: str):
+def convert_to_gif(in_vid: str, out_gif: str, work_dir: str):
     logging.info("Converting video to gif...")
+
+    palette_path = os.path.join(work_dir, __palette_filename)
 
     st = time.time()
     ffmpeg.input(in_vid).filter("palettegen", reserve_transparent=1).output(
-        __palfne
+        palette_path
     ).run(quiet=True)
     logging.debug(f"Generated palette")
 
     ffmpeg.filter(
-        [ffmpeg.input(in_vid), ffmpeg.input(__palfne)],
+        [ffmpeg.input(in_vid), ffmpeg.input(palette_path)],
         "paletteuse",
         alpha_threshold=128,
     ).output(out_gif).run(quiet=True)
@@ -88,7 +91,7 @@ def static_caption(in_img: str, out_img: str, caption_img: Image):
         captioned_img.save(out_img)
 
 
-def motion_caption(in_vid: str, out_vid: str, caption_img: Image, is_gif: bool = False):
+def motion_caption(in_vid: str, out_vid: str, caption_img: Image, work_dir: str, config: Config, is_gif: bool):
     logging.debug("Preparing video...")
     st = time.time()
 
@@ -102,10 +105,10 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image, is_gif: bool =
     )
 
     # paste caption
-    caption_img.save(__capfne)
-    caption_clip = ImageClip(
-        __capfne
-    )  # we cannot pass it (?), gotta save and load apparently...
+    caption_path = os.path.join(work_dir, __caption_filename)
+    # we cannot pass it (?), gotta save and load apparently...
+    caption_img.save(caption_path)
+    caption_clip = ImageClip(caption_path)
     captioned_vid = CompositeVideoClip(
         [captioned_vid, caption_clip.set_position(("center", "top"))]
     )
@@ -139,10 +142,10 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image, is_gif: bool =
 
 
 # the old frame-by-frame captioning method
-def legacy_caption(in_frames, out_gif: str, caption_img: Image):
+def legacy_caption(in_frames, out_gif: str, caption_img: Image, work_dir: str):
     # sorted list of frames
     frames = sorted(
-        [file for file in next(os.walk("."))[2] if file.endswith("png")], key=str
+        [os.path.join(work_dir, file) for file in next(os.walk(work_dir))[2] if file.endswith("png")], key=str
     )
 
     # fit caption to frame
@@ -163,7 +166,7 @@ def legacy_caption(in_frames, out_gif: str, caption_img: Image):
     logging.info(f"Applied caption to {len(frames)} frames in {et - st} seconds")
 
     # convert to gif
-    gif_from_frames(in_frames, out_gif)
+    gif_from_frames(in_frames, out_gif, work_dir)
 
 def pngcrush_optimize(filepath: str):
     check_dependency("pngcrush")

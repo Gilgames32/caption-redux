@@ -51,7 +51,7 @@ def determine_format(link: str) -> str:
         return "mp4"
 
 
-def fetch_source(link: str, ext: str, dist: str, frames: bool) -> str:
+def fetch_source(link: str, ext: str, work_dir: str, frames: bool) -> str:
     if os.path.exists(link):
         logging.debug(f"Local file detected at {link}")
         
@@ -62,7 +62,7 @@ def fetch_source(link: str, ext: str, dist: str, frames: bool) -> str:
         if frames:
             logging.info("Converting local file to frames...")
             # TODO: test
-            frames_path = os.path.join(dist, __framenaming)
+            frames_path = os.path.join(work_dir, __framenaming)
             ffmpeg.input(link).output(frames_path).overwrite_output().run(quiet=True)
             return frames_path
         
@@ -71,13 +71,13 @@ def fetch_source(link: str, ext: str, dist: str, frames: bool) -> str:
     elif link.startswith("https://"):
         if frames:
             logging.info("Fetching frames...")
-            frames_path = os.path.join(dist, __framenaming)
+            frames_path = os.path.join(work_dir, __framenaming)
             ffmpeg.input(link).output(frames_path).overwrite_output().run(quiet=True)
             return frames_path
         
         else:
             download_filename = __temp_source_filename + "." + (ext if ext != "gif" else "mp4")
-            download_path = os.path.join(dist, download_filename)
+            download_path = os.path.join(work_dir, download_filename)
             logging.info("Downloading media...")
             ffmpeg.input(link).output(download_path).run(quiet=True)
             return download_path

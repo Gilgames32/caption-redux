@@ -10,7 +10,7 @@ from .makegif import convert_to_gif, gifsicle_optimize, motion_caption, static_c
 from .config import Config
 
 
-__tmp_result_name = "result"  # temporary output file name
+__tmp_result_name = "result"    # temporary output file name
 
 
 def caption(config: Config) -> str:
@@ -62,27 +62,27 @@ def make_unique_dir(text: str) -> tuple[str, str]:
     return unique_id, unique_dir
 
 
-def apply_caption(config: Config, source_path: str, caption_img: str, ext: str, dist: str, legacy_gif_method: bool = False):
+def apply_caption(config: Config, source_path: str, caption_img: str, ext: str, work_dir: str, legacy_gif_method: bool = False):
     logging.info("Applying caption...")
 
-    output_path = os.path.join(dist, __tmp_result_name + "." + ext)
+    output_path = os.path.join(work_dir, __tmp_result_name + "." + ext)
 
     if legacy_gif_method:
-        legacy_caption(source_path, output_path, caption_img)
+        legacy_caption(source_path, output_path, caption_img, work_dir)
     elif ext == "png":
         static_caption(source_path, output_path, caption_img)
         if config.force_gif:
             logging.info("Converting png to gif...")
-            new_output_path = os.path.join(dist, __tmp_result_name + ".gif")
-            convert_to_gif(output_path, new_output_path)
+            new_output_path = os.path.join(work_dir, __tmp_result_name + ".gif")
+            convert_to_gif(output_path, new_output_path, work_dir)
             output_path = new_output_path
             ext = "gif"
     else:
-        temp_output_path = os.path.join(dist, __tmp_result_name + ".mp4")
-        motion_caption(source_path, temp_output_path, caption_img, ext == "gif")
+        temp_output_path = os.path.join(work_dir, __tmp_result_name + ".mp4")
+        motion_caption(source_path, temp_output_path, caption_img, work_dir, config, ext == "gif")
 
         if ext == "gif" or config.force_gif:
-            convert_to_gif(temp_output_path, output_path)
+            convert_to_gif(temp_output_path, output_path, work_dir)
 
     return output_path
 
