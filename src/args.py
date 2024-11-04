@@ -1,29 +1,28 @@
 import logging
-import argparse
+from argparse import ArgumentParser, Namespace, BooleanOptionalAction
 
-captiontext: str = None
-imgpath: str = None
-parser = argparse.ArgumentParser(description="Caption Generator")
+def parse_args() -> Namespace:
+    parser = ArgumentParser(description="Caption Redux - Caption Generator")
+    parser.add_argument("-i", "--image", help="URL or path to the image")
+    parser.add_argument("-t", "--text", help="Caption text")
+    parser.add_argument("-g", "--gif", help="Force GIF output", action=BooleanOptionalAction)
+    parser.add_argument("-a", "--alpha", help="Preserve the alpha channel for GIFs", action=BooleanOptionalAction)
 
-parser.add_argument("-i", "--image", help="url or path to the image", default="")
-parser.add_argument("-t", "--text", help="caption text", default="")
-parser.add_argument("-g", "--gif", help="force gif output", action=argparse.BooleanOptionalAction)
-parser.add_argument("-a", "--alpha", help="preserve the alpha channel for gifs", action=argparse.BooleanOptionalAction)
-
-
-def correctparse():
-    global captiontext, imgpath, force_gif, gif_alpha
     args = parser.parse_args()
-    logging.debug(f"Parsed arguments: {args}")
-    
-    force_gif = args.gif != None
-    gif_alpha = args.alpha != None
+    logging.debug("Parsed arguments")
 
-    # fill in arguments if none were given
-    imgpath = args.image
-    while imgpath == "":
-        imgpath = input("Enter image path: ").strip()
+    if not args.image:
+        args.image = input("Enter the image path: ")
 
-    captiontext = args.text
-    while captiontext == "":
-        captiontext = input("Enter caption: ")
+    if not args.text:
+        args.text = input("Enter the caption text: ")
+
+    return args
+
+def manual_args(image: str, text: str, gif: bool = None, alpha: bool = None) -> Namespace:
+    args = Namespace()
+    args.image = image
+    args.text = text
+    args.gif = gif
+    args.alpha = alpha
+    return args

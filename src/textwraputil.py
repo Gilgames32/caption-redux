@@ -4,7 +4,7 @@ from textwrap import wrap
 from emoji import is_emoji, emojize
 from typing import List
 
-from . import config
+from .config import Config
 
 
 def add_emoji_weight(text: str) -> str:
@@ -32,7 +32,7 @@ def remove_emoji_weight(lines: List[str]) -> List[str]:
     return lines
 
 
-def weighted_textwrap(text: str):
+def weighted_textwrap(text: str, text_wrap_width: int):
     # convert emojis
     text = emojize(text.strip(), variant="emoji_type", language="alias")
 
@@ -51,7 +51,7 @@ def weighted_textwrap(text: str):
 
     # lol
     wrapped_lines = sum(
-        [wrap(line, width=config.text_wrap_width) if line != "" else list(" ") for line in lines], []
+        [wrap(line, width=text_wrap_width) if line != "" else list(" ") for line in lines], []
     )
 
     # remove weight from text
