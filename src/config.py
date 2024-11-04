@@ -28,7 +28,7 @@ class Config:
         self.safe_mode = config.get("safe_mode", True)
         self.loglevel = config.get("loglevel", "info").upper()
 
-        self.font_path = config.get("text", {}).get("font", "") # TODO: defailt
+        self.font_path = config.get("text", {}).get("font", "") # TODO: default font
         self.font_size = config.get("text", {}).get("font_size", 100)
         self.text_wrap_width = config.get("text", {}).get("wrap_width", 22)
         self.line_spacing = config.get("text", {}).get("line_spacing", 28)
@@ -57,4 +57,4 @@ class Config:
             raise ValueError("Invalid emoji style")
         if self.loglevel not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
             raise ValueError("Invalid loglevel")
-        # TODO: validate bitrate?
+        # TODO: validate bitrate
