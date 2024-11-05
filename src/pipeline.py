@@ -32,7 +32,7 @@ def caption(config: Config) -> str:
         result_path = move_result(output_fname, unique_id)
 
     except Exception as e:
-        raise e  # TODO
+        raise e
     finally:
         logging.info("Cleaning up working directory...")
         clear_folder(unique_dir)
