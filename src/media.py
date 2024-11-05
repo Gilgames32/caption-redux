@@ -61,7 +61,6 @@ def fetch_source(link: str, ext: str, work_dir: str, frames: bool) -> str:
         
         if frames:
             logging.info("Converting local file to frames...")
-            # TODO: test
             frames_path = os.path.join(work_dir, __framenaming)
             ffmpeg.input(link).output(frames_path).overwrite_output().run(quiet=True)
             return frames_path
