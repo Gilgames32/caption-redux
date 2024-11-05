@@ -9,22 +9,6 @@ __temp_source_filename = "source"   # temporary file name for the source
 __framenaming = "frame_%05d.png"    # frame name template for ffmpeg
 
 
-def check_media_site(url: str) -> str:
-    if "https://" in url:
-        if "tenor.com/view" in url:
-            logging.info("Found media link in supported image hosting site")
-            url = (
-                requests.get(url)
-                .text.split("contentUrl")[1]
-                .replace("\\u002F", "/")
-                .split('"')[2]
-            )
-        # TODO: add more
-
-    logging.debug(f"Corrected url to {url}")
-    return url
-
-
 def determine_format(link: str) -> str:
     try:
         probe = ffmpeg.probe(link)

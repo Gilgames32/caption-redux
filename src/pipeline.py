@@ -5,7 +5,8 @@ from . import emojiutil
 from .packages import check_dependency
 from .generatecaption import generate_caption_image
 from .util import ensure_folder, clear_folder, generate_name
-from .media import determine_format, fetch_source, check_media_site
+from .media import determine_format, fetch_source
+from .mediasites import process_url
 from .makegif import convert_to_gif, gifsicle_optimize, motion_caption, static_caption, legacy_caption, pngcrush_optimize
 from .config import Config
 
@@ -17,7 +18,7 @@ def caption(config: Config) -> str:
     setup_environment()
     unique_id, unique_dir = make_unique_dir(config.caption_text)
 
-    config.image_path = check_media_site(config.image_path)
+    config.image_path = process_url(config.image_path)
 
     try:
         source_ext = determine_format(config.image_path)
