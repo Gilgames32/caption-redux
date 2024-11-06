@@ -1,10 +1,5 @@
 import json
 import logging
-import os
-
-# project root
-# FIXME
-# base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)) + "/"
 
 class Config:
     # dont tamper
@@ -45,12 +40,14 @@ class Config:
         self.gifsicle_compression = config.get("optimization", {}).get("gifsicle", {}).get("compression", 200)
         self.gifsicle_colors = config.get("optimization", {}).get("gifsicle", {}).get("colors", 256)
         self.gif_fps = config.get("optimization", {}).get("gifsicle", {}).get("fps", 30)
-        self.video_compression = config.get("optimization", {}).get("video", {}).get("enabled", False)
+        self.video_compression_enabled = config.get("optimization", {}).get("video", {}).get("enabled", False)
         self.video_fps = config.get("optimization", {}).get("video", {}).get("fps", 30)
         self.video_bitrate = config.get("optimization", {}).get("video", {}).get("bitrate", "1000k")
         self.video_height = config.get("optimization", {}).get("video", {}).get("height", 480)
 
         self.validate()
+
+        logging.debug("Loaded configuration")
 
     def validate(self):
         if self.emoji_style not in ["twitter", "apple", "google", "facebook"]:

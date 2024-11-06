@@ -1,7 +1,6 @@
 import os
 import logging
 
-from . import emojiutil
 from .packages import check_dependency
 from .generatecaption import generate_caption_image
 from .util import ensure_folder, clear_folder, generate_name
@@ -14,7 +13,7 @@ from .config import Config
 __tmp_result_name = "result"    # temporary output file name
 
 
-def caption(config: Config) -> str:
+def caption(config: Config) -> str:    
     setup_environment()
     unique_id, unique_dir = make_unique_dir(config.caption_text)
 
@@ -23,7 +22,7 @@ def caption(config: Config) -> str:
     try:
         source_ext = determine_format(config.image_path)
         legacy_gif_method = source_ext == "gif" and config.gif_alpha
-        source_path = fetch_source(config.image_path, source_ext, unique_dir, legacy_gif_method)
+        source_path = fetch_source(config.image_path, source_ext, unique_dir, legacy_gif_method, config.safe_mode)
 
         caption_img = generate_caption_image(config)
 

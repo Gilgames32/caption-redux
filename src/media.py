@@ -1,9 +1,6 @@
 import os
-import requests
 import logging
 import ffmpeg
-
-from . import config
 
 __temp_source_filename = "source"   # temporary file name for the source
 __framenaming = "frame_%05d.png"    # frame name template for ffmpeg
@@ -35,11 +32,11 @@ def determine_format(link: str) -> str:
         return "mp4"
 
 
-def fetch_source(link: str, ext: str, work_dir: str, frames: bool) -> str:
+def fetch_source(link: str, ext: str, work_dir: str, frames: bool = False, safe_mode: bool = False) -> str:
     if os.path.exists(link):
         logging.debug(f"Local file detected at {link}")
         
-        if config.safe_mode:
+        if safe_mode:
             logging.warning("Unable to access local files in safe mode")
             raise ValueError("Local files are disabled in safe mode")
         
