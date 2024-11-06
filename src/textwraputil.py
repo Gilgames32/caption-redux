@@ -4,8 +4,6 @@ from textwrap import wrap
 from emoji import is_emoji, emojize
 from typing import List
 
-from .config import Config
-
 
 def add_emoji_weight(text: str) -> str:
     # how tf would one write regex for emojis lol

@@ -6,28 +6,26 @@ import logging
 from PIL import Image
 from emoji import demojize, is_emoji
 
-from . import config
-
-emo_dir = "emojis/"
+from src.config import Config
 
 
-def get_emoji_image(emoji_character: str) -> Image.Image:
+def get_emoji_image(emoji_character: str, emoji_style: str = "twitter") -> Image.Image:
     if is_emoji(emoji_character):
-        emoji_name = config.emoji_style + "_" + demojize(emoji_character, delimiters=("", ""))
+        emoji_name = emoji_style + "_" + demojize(emoji_character, delimiters=("", ""))
         logging.debug(f"Demojized {emoji_character} to {emoji_name}")
     else:
         emoji_name = re.search(r":[\d]+>", emoji_character).group()[1:-1]
         logging.debug(f"Extracted {emoji_name} from discord emote {emoji_character}")
 
-    emoji_path = emo_dir + emoji_name + ".png"
+    emoji_path = os.path.join(Config.emoji_dir, emoji_name + ".png")
     # check if its in cache
     if not os.path.exists(emoji_path):
         logging.debug(f"Emoji {emoji_name} not found in cache, downloading...")
         if is_emoji(emoji_character):
             response = requests.get(
-                f"https://emojicdn.elk.sh/{emoji_character}?style={config.emoji_style}", stream=True
+                f"https://emojicdn.elk.sh/{emoji_character}?style={emoji_style}", stream=True
             )
-            logging.debug(f"Downloaded {emoji_character} from emojicdn, style: {config.emoji_style}")
+            logging.debug(f"Downloaded {emoji_character} from emojicdn, style: {emoji_style}")
         else:
             # ignoring animated discord emotes
             response = requests.get(
