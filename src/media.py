@@ -17,9 +17,10 @@ def determine_format(link: str) -> str:
         logging.debug("Gif detected")
         return "gif"
 
-    elif (
+    elif ( # yummers
+        "duration" not in probe["format"] and (
         "nb_frames" not in probe["streams"][0]
-        or probe["streams"][0]["nb_frames"] == "1"
+        or probe["streams"][0]["nb_frames"] == "1")
     ):
         logging.debug(
             "No frame count or single frame attribute detected, output will be static"

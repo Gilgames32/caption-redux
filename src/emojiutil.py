@@ -6,7 +6,7 @@ import logging
 from PIL import Image
 from emoji import demojize, is_emoji
 
-from src.config import Config
+from .config import Config
 
 
 def get_emoji_image(emoji_character: str, emoji_style: str = "twitter") -> Image.Image:
