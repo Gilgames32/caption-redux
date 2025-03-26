@@ -31,7 +31,7 @@ You **must** have [FFmpeg](https://www.ffmpeg.org/). [Gifsicle](https://www.lcdf
 *Dummy guide soon.*
 
 ## Usage
-Run `caption-redux.py`. Optionally you can use arguments, see `-h`.
+Run `main.py`. Optionally you can use arguments, see `-h`.
 - `-i <image link>` path or direct URL to the image
 - `-t <caption text>` the caption text
 - `-a`: preserve GIF transparency (uses the legacy method, a bit slower) 

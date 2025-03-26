@@ -4,7 +4,7 @@ import logging
 import time
 import ffmpeg
 from PIL import Image
-from moviepy.editor import VideoFileClip, ColorClip, CompositeVideoClip, ImageClip
+from moviepy import VideoFileClip, ColorClip, CompositeVideoClip, ImageClip
 
 from .generatecaption import apply_caption, fit_caption_to_frame
 from .config import Config
@@ -104,22 +104,18 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image, work_dir: str,
         (source_vid.w, source_vid.h + caption_img.height), color=(255, 255, 255)
     )
 
-    # paste caption
+    # paste caption and video
     caption_path = os.path.join(work_dir, __caption_filename)
     # we cannot pass it (?), gotta save and load apparently...
     caption_img.save(caption_path)
     caption_clip = ImageClip(caption_path)
+    
     captioned_vid = CompositeVideoClip(
-        [captioned_vid, caption_clip.set_position(("center", "top"))]
-    )
-
-    # paste video
-    captioned_vid = CompositeVideoClip(
-        [captioned_vid, source_vid.set_pos(("center", "bottom"))]
+        [captioned_vid, caption_clip.with_position(("center", "top")), source_vid.with_position(("center", "bottom"))]
     )
 
     # Export the final video
-    captioned_vid = captioned_vid.set_duration(source_vid.duration)
+    captioned_vid = captioned_vid.with_duration(source_vid.duration)
     logging.info("Writing video...")
 
     # compression is pointless for gifs
