@@ -1,6 +1,7 @@
 import os
 import logging
 import ffmpeg
+import requests
 
 __temp_source_filename = "source"   # temporary file name for the source
 __framenaming = "frame_%05d.png"    # frame name template for ffmpeg
@@ -56,10 +57,18 @@ def fetch_source(link: str, ext: str, work_dir: str, frames: bool = False, safe_
             ffmpeg.input(link).output(frames_path).overwrite_output().run(quiet=True)
             return frames_path
         
+        elif ext == "gif":
+            logging.info("Fetching gif...")
+            gif_path = os.path.join(work_dir, __temp_source_filename + ".gif")
+            with open(gif_path, 'wb') as f:
+                f.write(requests.get(link).content)
+            logging.debug("Converting gif to mp4...")
+            mp4_path = os.path.join(work_dir, __temp_source_filename + ".mp4")
+            ffmpeg.input(gif_path).output(mp4_path).run(quiet=True)
+            return mp4_path
         else:
-            download_filename = __temp_source_filename + "." + (ext if ext != "gif" else "mp4")
-            download_path = os.path.join(work_dir, download_filename)
-            logging.info("Downloading media...")
+            logging.info("Fetching video...")
+            download_path = os.path.join(work_dir, __temp_source_filename + "." + ext)
             ffmpeg.input(link).output(download_path).run(quiet=True)
             return download_path
     
