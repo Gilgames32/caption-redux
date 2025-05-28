@@ -128,9 +128,10 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image, work_dir: str,
             captioned_vid.resize(height=config.video_height)
         captioned_vid.write_videofile(out_vid, logger=None, threads=4, 
                                       bitrate=config.video_bitrate,
-                                      fps=min(config.video_fps, source_vid.fps))
+                                      fps=min(config.video_fps, source_vid.fps), 
+                                      audio_codec="aac")
     else:
-        captioned_vid.write_videofile(out_vid, logger=None, threads=4)
+        captioned_vid.write_videofile(out_vid, logger=None, threads=4, audio_codec="aac")
     
 
     et = time.time()
