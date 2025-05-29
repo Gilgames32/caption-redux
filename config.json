@@ -34,7 +34,8 @@
             "enabled": true,
             "fps": 30,
             "bitrate": "1000k",
-            "height": 480
+            "height": 480,
+            "audio_codec": "aac"
         }
     }
 }

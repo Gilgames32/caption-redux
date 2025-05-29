@@ -44,6 +44,7 @@ class Config:
         self.video_fps = config.get("optimization", {}).get("video", {}).get("fps", 30)
         self.video_bitrate = config.get("optimization", {}).get("video", {}).get("bitrate", "1000k")
         self.video_height = config.get("optimization", {}).get("video", {}).get("height", 480)
+        self.audio_codec = config.get("optimization", {}).get("video", {}).get("audio_codec", "aac")
 
         self.validate()
 

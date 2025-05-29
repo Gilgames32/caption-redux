@@ -129,9 +129,9 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image, work_dir: str,
         captioned_vid.write_videofile(out_vid, logger=None, threads=4, 
                                       bitrate=config.video_bitrate,
                                       fps=min(config.video_fps, source_vid.fps), 
-                                      audio_codec="aac")
+                                      audio_codec=config.audio_codec)
     else:
-        captioned_vid.write_videofile(out_vid, logger=None, threads=4, audio_codec="aac")
+        captioned_vid.write_videofile(out_vid, logger=None, threads=4, audio_codec=config.audio_codec)
     
 
     et = time.time()
