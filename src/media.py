@@ -66,6 +66,12 @@ def fetch_source(link: str, ext: str, work_dir: str, frames: bool = False, safe_
             mp4_path = os.path.join(work_dir, __temp_source_filename + ".mp4")
             ffmpeg.input(gif_path).output(mp4_path).run(quiet=True)
             return mp4_path
+        elif ext in ["png", "jpg", "jpeg"]:
+            logging.info("Fetching image...")
+            image_path = os.path.join(work_dir, __temp_source_filename + "." + ext)
+            # in some cases the amount of frames is broken, force it to 1
+            ffmpeg.input(link).output(image_path, vframes=1).run(quiet=True)
+            return image_path
         else:
             logging.info("Fetching video...")
             download_path = os.path.join(work_dir, __temp_source_filename + "." + ext)
