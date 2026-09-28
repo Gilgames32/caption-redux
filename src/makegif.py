@@ -125,7 +125,7 @@ def motion_caption(in_vid: str, out_vid: str, caption_img: Image, work_dir: str,
     # compress video if enabled
     elif not is_gif and config.video_compression_enabled:
         if source_vid.h > config.video_height:
-            captioned_vid.resize(height=config.video_height)
+            captioned_vid.resized(height=config.video_height)
         captioned_vid.write_videofile(out_vid, logger=None, threads=4, 
                                       bitrate=config.video_bitrate,
                                       fps=min(config.video_fps, source_vid.fps), 
