@@ -35,6 +35,9 @@ def determine_format(link: str) -> str:
 
 
 def fetch_source(link: str, ext: str, work_dir: str, frames: bool = False, safe_mode: bool = False) -> str:
+    if link.startswith("file://"):
+        link = link[7:] # remove prefix
+    
     if os.path.exists(link):
         logging.debug(f"Local file detected at {link}")
         
